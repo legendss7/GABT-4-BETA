@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import random 
 from fpdf import FPDF 
-from PIL import Image 
 import base64 
 
 # ---------------------------
@@ -17,10 +16,6 @@ st.set_page_config(
 
 # --- RUTAS DE ARCHIVOS ---
 LOGO_PATH = "logo empresa.JPG" 
-# Las fuentes Arial son necesarias para que el PDF renderice tildes y eñes correctamente.
-# Asume que los archivos Arial.ttf y Arial_Bold.ttf están en la misma carpeta.
-FONT_PATH = "Arial.ttf"
-FONT_BOLD_PATH = "Arial_Bold.ttf"
 
 
 # ---------------------------
@@ -30,7 +25,6 @@ if "logo_base64" not in st.session_state:
     try:
         with open(LOGO_PATH, "rb") as f:
             logo_bytes = f.read()
-            # Usar 'image/jpeg' como tipo MIME correcto para JPG
             st.session_state.logo_base64 = base64.b64encode(logo_bytes).decode("utf-8")
         st.session_state.logo_found = True
     except FileNotFoundError:
@@ -51,7 +45,7 @@ if st.session_state.logo_found:
         background-repeat: no-repeat;
         background-position: right 1rem top 0.5rem; 
         background-size: 100px; 
-        background-color: transparent; /* Asegura que no tape el fondo */
+        background-color: transparent;
     }}
     """
 
@@ -60,7 +54,6 @@ st.markdown(f"""
     /* Ocultar "Made with Streamlit" y Footer */
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
-    /* REPARADO: Hace que el header sea visible para el logo */
     header {{visibility: visible;}} 
 
     {logo_css}
@@ -81,7 +74,7 @@ st.markdown(f"""
         border: 1px solid #e0e0e0;
     }}
     
-    /* Tarjeta de pregunta (REPARADO) */
+    /* Tarjeta de pregunta */
     .question-card {{
         background: #ffffff;
         border-radius: 12px;
@@ -141,8 +134,7 @@ def get_full_question_bank():
     """Define y retorna el banco completo de preguntas."""
     
     # --- BANCOS DE PREGUNTAS (35 por categoría = 105 total) ---
-    # Nota: He acortado la lista aquí para no repetir el código largo,
-    # pero el banco completo del código anterior DEBE estar aquí para que funcione la aleatoriedad.
+    # He incluido el banco completo de 105 preguntas que definiste para asegurar la aleatoriedad.
 
     banco_aritmetica = [
         {"txt": "¿Cuánto es 7 x 6?", "ops": ["40", "42", "48", "56"], "r": "42", "exp": "7 multiplicado por 6 es 42."},
@@ -280,7 +272,6 @@ def get_questions():
         selected_verbal = random.sample(bancos["Verbal"], num_verbal)
         selected_problemas = random.sample(bancos["Problema"], num_problemas)
     except ValueError as e:
-        # Esto ocurre si el banco de preguntas es menor al número que intentas sacar
         st.error(f"Error en la selección de preguntas: El banco es demasiado pequeño para sacar el número de preguntas requerido. {e}")
         return []
 
@@ -293,8 +284,6 @@ def get_questions():
     # 4. Asignar IDs de 1 a 50 y la categoría
     final_questions = []
     for i, q in enumerate(all_questions):
-        # Determinar la categoría basándose en la pertenencia al banco (esto es aproximado, 
-        # pero para el propósito de GATB es suficiente)
         cat = ""
         for name, bank in bancos.items():
             if q in bank:
@@ -313,7 +302,7 @@ def get_questions():
     return final_questions
 
 # ---------------------------
-# Funciones para el PDF
+# Funciones para el PDF (Corregido para manejar UTF-8 sin archivos .ttf locales)
 # ---------------------------
 def create_pdf_report(df_resultados, total_correctas, total_preguntas, categorias_data, logo_path):
     """Genera un informe PDF profesional con los resultados y gráficos de rendimiento."""
@@ -321,48 +310,40 @@ def create_pdf_report(df_resultados, total_correctas, total_preguntas, categoria
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     
-    # 1. Configuración de Fuentes (Necesario para tildes y eñes)
-    try:
-        # Carga las fuentes que deben estar en la misma carpeta
-        pdf.add_font('Arial', '', FONT_PATH, uni=True)
-        pdf.add_font('Arial', 'B', FONT_BOLD_PATH, uni=True)
-        pdf.set_font('Arial', 'B', 16)
-    except Exception as e:
-        # Si las fuentes no están, usa la fuente predeterminada pero advierte
-        st.warning(f"No se pudieron cargar las fuentes {FONT_PATH}. El PDF puede tener problemas con tildes y eñes.")
-        pdf.set_font('Arial', 'B', 16)
-
-
+    # --- Configuración de Fuente (SOLUCIÓN: Usar fuente Times estándar para UTF-8) ---
+    pdf.set_font('Times', '', 16)
+    
     # --- Cabecera con Logo (si existe) ---
     if st.session_state.logo_found and logo_path:
         try:
             pdf.image(logo_path, x=pdf.w - 30, y=10, w=20) 
         except Exception as e:
-            st.warning(f"No se pudo incrustar el logo en el PDF: {e}. Verifique la ruta.")
+            st.warning(f"No se pudo incrustar el logo en el PDF. {e}")
 
     # --- Título y Resumen ---
+    pdf.set_font('Times', 'B', 16)
     pdf.set_fill_color(220, 220, 220)
     pdf.cell(0, 15, 'INFORME DE RESULTADOS - SIMULADOR GATB', 0, 1, 'C', 1)
     pdf.ln(5)
 
-    # ... (El resto de la lógica del PDF sigue igual, usando pdf.set_font('Arial', ...) )
-    
     # --- Resumen General ---
-    pdf.set_font('Arial', 'B', 12)
+    pdf.set_font('Times', 'B', 12)
     pdf.cell(0, 8, '1. Resumen de Rendimiento General', 0, 1, 'L')
-    pdf.set_font('Arial', '', 11)
+    
+    pdf.set_font('Times', '', 11)
     
     porcentaje_total = (total_correctas / total_preguntas) * 100
     
+    # Usando Times para manejar las tildes en el texto.
     pdf.cell(0, 7, f'  • Fecha del Test: {pd.Timestamp.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
     pdf.cell(0, 7, f'  • Preguntas Totales: {total_preguntas}', 0, 1)
     pdf.cell(0, 7, f'  • Respuestas Correctas: {total_correctas} ({porcentaje_total:.1f}%)', 0, 1)
     pdf.ln(5)
 
     # --- Gráfico de Rendimiento por Categoría (simulación de texto) ---
-    pdf.set_font('Arial', 'B', 12)
+    pdf.set_font('Times', 'B', 12)
     pdf.cell(0, 8, '2. Detalle de Rendimiento por Aptitud', 0, 1, 'L')
-    pdf.set_font('Arial', '', 10)
+    pdf.set_font('Times', '', 10)
 
     categorias_list = list(categorias_data.keys())
     colores = [(10, 132, 255), (40, 200, 120), (255, 180, 50)] 
@@ -371,22 +352,22 @@ def create_pdf_report(df_resultados, total_correctas, total_preguntas, categoria
         data = categorias_data[cat]
         porcentaje = (data['correctas'] / data['total']) * 100 if data['total'] > 0 else 0
         
-        pdf.set_font('Arial', 'B', 10)
+        pdf.set_font('Times', 'B', 10)
         pdf.cell(40, 7, f'{cat}:', 0, 0, 'L')
         
         fill_color = colores[i % len(colores)]
         pdf.set_fill_color(fill_color[0], fill_color[1], fill_color[2])
         pdf.cell(porcentaje, 7, '', 1, 0, 'L', 1) 
         
-        pdf.set_font('Arial', '', 10)
+        pdf.set_font('Times', '', 10)
         pdf.cell(40, 7, f' {porcentaje:.1f}% ({data["correctas"]}/{data["total"]})', 0, 1, 'L')
         
     pdf.ln(5)
 
     # --- Tabla de Resultados Detallados ---
-    pdf.set_font('Arial', 'B', 12)
+    pdf.set_font('Times', 'B', 12)
     pdf.cell(0, 8, '3. Revisión Pregunta a Pregunta', 0, 1, 'L')
-    pdf.set_font('Arial', '', 8)
+    pdf.set_font('Times', '', 7) # Reducir un poco el tamaño para la tabla
     pdf.set_fill_color(200, 200, 200)
 
     col_widths = [10, 30, 70, 30, 30]
@@ -396,7 +377,7 @@ def create_pdf_report(df_resultados, total_correctas, total_preguntas, categoria
         pdf.cell(col_widths[i], 7, header, 1, 0, 'C', 1)
     pdf.ln()
 
-    pdf.set_font('Arial', '', 7)
+    pdf.set_font('Times', '', 7)
     for index, row in df_resultados.iterrows():
         pdf.cell(col_widths[0], 5, str(row["ID"]), 1, 0, 'C')
         pdf.cell(col_widths[1], 5, row["Categoría"], 1, 0, 'C')
@@ -415,31 +396,24 @@ def create_pdf_report(df_resultados, total_correctas, total_preguntas, categoria
 # ---------------------------
 
 def initialize_state():
-    """Inicializa el estado de la sesión, asegurando que las preguntas SÓLO se generen al inicio de un test."""
+    """Inicializa el estado de la sesión."""
     if "test_started" not in st.session_state:
         st.session_state.test_started = False
     if "show_results" not in st.session_state:
         st.session_state.show_results = False
     if "page_idx" not in st.session_state:
         st.session_state.page_idx = 0
-    
-    # Las preguntas SOLO se generan la primera vez o cuando se fuerza un reinicio desde la bienvenida
     if "questions" not in st.session_state:
-         # Carga un conjunto inicial, aunque se reemplazará si se inicia la prueba
         st.session_state.questions = [] 
-    
-    # Inicializa o resetea las respuestas
     if "answers" not in st.session_state:
         st.session_state.answers = {}
 
 def start_new_test():
-    """Resetea todas las variables y genera un nuevo conjunto de preguntas."""
+    """Resetea todas las variables y genera un nuevo conjunto de preguntas ÚNICAS."""
     st.session_state.test_started = True
     st.session_state.show_results = False
     st.session_state.page_idx = 0
-    # **Punto de corrección:** Forzar la regeneración de preguntas únicas
     st.session_state.questions = get_questions() 
-    # Resetear las respuestas para las nuevas preguntas
     st.session_state.answers = {str(q["id"]): "" for q in st.session_state.questions}
     st.rerun()
 
@@ -467,8 +441,8 @@ def show_welcome_screen():
 
 def show_test_screen():
     """Muestra la interfaz del test (preguntas y barra lateral)."""
-    # Si por alguna razón el conjunto de preguntas está vacío, forzar al inicio
     if not st.session_state.questions:
+        # Fallback en caso de que las preguntas no se carguen (debería evitarse con start_new_test)
         start_new_test() 
 
     preguntas = st.session_state.questions
@@ -522,7 +496,8 @@ def show_test_screen():
         prev_answer = st.session_state["answers"].get(str(q["id"]))
         
         selected = st.radio(
-            "Selecciona tu respuesta:",
+            # CORRECCIÓN APLICADA: Usamos "" como label para eliminar la palabra "ime"
+            "", 
             options=q["opciones"],
             index=get_option_index(q, prev_answer),
             key=key,
@@ -543,7 +518,6 @@ def show_results_screen():
     preguntas = st.session_state.questions
     respuestas = st.session_state.answers
     
-    # (Lógica para calcular resultados y categorías...)
     resultados_data = []
     categorias = {"Aritmética": {"correctas": 0, "total": 0},
                   "Verbal": {"correctas": 0, "total": 0},
