@@ -851,7 +851,66 @@ def vista_test_activo():
     
     if not all_answered:
         st.warning(f"Faltan **{N_PREGUNTAS_POR_AREA - answered_count}** preguntas por responder en esta sección.")
+# --- INICIO MODIFICACIÓN: LÓGICA DE ROLES DINÁMICOS ---
 
+def get_rol_potencial(percentiles):
+    """Determina los roles aptos y no aptos basados en el perfil de aptitudes."""
+    
+    # 1. Calcular el promedio de percentiles por clúster de aptitudes GABT
+    
+    # Razonamiento/Intelectual (I)
+    cluster_I = (percentiles.get("Razonamiento General", 0) + percentiles.get("Razonamiento Verbal", 0) + percentiles.get("Razonamiento Numérico", 0) + percentiles.get("Razonamiento Abstracto", 0)) / 4
+    # Perceptivo/Clerical (C)
+    cluster_C = (percentiles.get("Velocidad Perceptiva", 0) + percentiles.get("Atención Concentrada", 0) + percentiles.get("Razonamiento Clerical", 0)) / 3
+    # Técnico/Mecánico/Espacial (M)
+    cluster_M = (percentiles.get("Razonamiento Espacial", 0) + percentiles.get("Razonamiento Mecánico", 0) + percentiles.get("Razonamiento Técnico", 0)) / 3
+    # Motor/Manual (F)
+    cluster_F = (percentiles.get("Precisión Manual", 0) + percentiles.get("Coordinación Manual", 0)) / 2
+
+    # Definición de umbrales para la toma de decisiones
+    UMBRAL_ALTO = 75
+    UMBRAL_BAJO = 35
+
+    roles_aptos = set()
+    roles_no_aptos = set()
+    
+    # Lógica de Roles Aptos basada en fortalezas (Alto o Superior)
+    if cluster_I >= UMBRAL_ALTO:
+        roles_aptos.add("Liderazgo Estratégico, Consultoría, Analista Senior, roles que exigen Visión de Negocio y Abstracción de Problemas.")
+    
+    if cluster_C >= UMBRAL_ALTO:
+        roles_aptos.add("Roles Administrativos, de Control de Calidad, Logística, Soporte al Cliente, Auditoría, Contabilidad, Facturación.")
+    
+    if cluster_M >= UMBRAL_ALTO:
+        roles_aptos.add("Ingeniería (Diseño, Planta), Mantenimiento Técnico, Operaciones de Manufactura, Arquitectura, Posiciones de Mando y Control Industrial.")
+
+    if cluster_F >= UMBRAL_ALTO:
+        roles_aptos.add("Operaciones de Detalle Fino, Ensamblaje de Precisión, Laboratorio Clínico, Producción de Artesanía, Mecánica de Alta Precisión, Tareas manuales especializadas.")
+
+    # Lógica de Roles NO Aptos basada en debilidades (Bajo o Muy Bajo)
+    if cluster_I < UMBRAL_BAJO:
+        roles_no_aptos.add("Roles Estratégicos o de Dirección que requieren una alta capacidad de análisis y toma de decisiones complejas (ej. CEO, CFO, Director de Estrategia).")
+    
+    if cluster_C < UMBRAL_BAJO:
+        roles_no_aptos.add("Cargos de Ingreso o Control de Datos Masivos, Tareas Administrativas o de Vigilancia Repetitiva (por falta de constancia/velocidad perceptiva y clerical).")
+    
+    if cluster_M < UMBRAL_BAJO:
+        roles_no_aptos.add("Posiciones de Ingeniería de Diseño, Mantenimiento Técnico o Especialista en Planos (por dificultad para visualizar y resolver problemas técnicos/espaciales).")
+        
+    if cluster_F < UMBRAL_BAJO:
+        roles_no_aptos.add("Operaciones de Ensamblaje, Manipulación de Instrumentos Finos o Trabajo de Laboratorio de Precisión (por falta de precisión o coordinación motora fina).")
+        
+    # Asignación de Roles Generales si no hay fortalezas claras
+    if not roles_aptos:
+        roles_aptos.add("Roles de Soporte Básico y Entrenamiento Continuo, con enfoque en las áreas de desarrollo prioritarias.")
+    
+    # Formateo del resultado
+    return {
+        "aptos": " | ".join(sorted(list(roles_aptos))),
+        "no_aptos": " | ".join(sorted(list(roles_no_aptos)))
+    }
+
+# --- FIN MODIFICACIÓN: LÓGICA DE ROLES DINÁMICOS ---
 
 def vista_resultados():
     """Muestra el informe de resultados profesional, detallado, con gráficos y estructurado."""
@@ -1011,4 +1070,5 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
+
 
