@@ -949,33 +949,45 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # --- 5. PLAN DE DESARROLLO ---
-    with st.container(border=True):
-        st.subheader("5. Potencial de Rol y Plan de Desarrollo")
-        
-        st.markdown(f"""
-        <div style="padding: 15px; border: 1px solid #003366; background-color: #f0f8ff; border-radius: 10px; margin-bottom: 20px;">
-            <h5 style="margin-top: 0; color: #003366;">Potencial Ocupacional Recomendado (Enfoque Primario)</h5>
-            <p style="font-size: 1.1em; font-weight: bold;">{analisis['potencial']}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # --- 5. Potencial de Rol y Plan de Desarrollo ---
+    st.header("5. Potencial de Rol y Plan de Desarrollo 💡") # 
 
-        st.markdown("#### **Estrategias Individualizadas de Desarrollo**")
-        st.info("Plan de acción basado en las aptitudes con percentiles bajos (≤ 40%) o aquellas que requieran mejora continua.")
-        
-        bottom_areas = df_resultados[df_resultados['Percentil'] <= 40]['Área'].tolist()
-        
-        if bottom_areas:
-            for area in bottom_areas:
-                estrategia = get_estrategias_de_mejora(area)
-                with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True):
-                    st.markdown(f"**Nivel de Prioridad:** **ALTA**")
-                    st.markdown(f"**Plan de Acción Sugerido:** {estrategia}")
-        else:
-            st.balloons()
-            st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.")
+    # 5.1 Potencial Ocupacional (Usa la nueva lógica dinámica)
+    # Se llama a la función get_rol_potencial, que analiza los clusters de percentiles.
+    potencial = get_rol_potencial(percentiles) # 
 
+    st.subheader("5.1 Potencial Ocupacional Recomendado (Enfoque Primario) 🎯") # 
+    st.success(f"**Cargos Recomendados:** {potencial['aptos']}") # 
 
+    # 5.2 Roles No Aptos (Muestra los roles desaconsejados por debilidad de clusters)
+    st.subheader("5.2 Roles para los cuales NO es Apto o se requiere MÁS Desarrollo 🛑") # 
+    if potencial['no_aptos']: # 
+        st.error(f"**Cargos NO Recomendados o de Alto Riesgo:** {potencial['no_aptos']}") # 
+    else:
+        st.success("El perfil muestra una alta versatilidad. No hay cargos principales para los cuales NO sea apto, pero se recomienda enfoque en las áreas de desarrollo listadas.") # 
+    
+    st.markdown("---") # 
+
+    # 5.3 Plan de Desarrollo (Estrategias)
+    st.subheader("5.3 Plan de Desarrollo Individual (Estrategias de Refuerzo)") # 
+
+    # Reutilizamos el DataFrame para encontrar las áreas de desarrollo
+    # Nota: Es importante que df_comparativo se haya creado antes de este punto.
+    # Si no tienes df_comparativo, puedes usar el diccionario 'desarrollo' definido en el punto 3.2
+    
+    # Asumo que la variable `desarrollo` fue definida previamente en la sección 3.2:
+    desarrollo = {area: percentil for area, percentil in percentiles.items() if percentil < 40}
+
+    if desarrollo:
+        for area, percentil in sorted(desarrollo.items(), key=lambda item: item[1]): # 
+            estrategia = get_estrategias_de_mejora(area)
+            with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True): # 
+                st.markdown(f"**Nivel de Prioridad:** **ALTA**") # 
+                st.markdown(f"**Percentil:** {percentil}")
+                st.markdown(f"**Plan de Acción Sugerido:** {estrategia}") # 
+    else:
+        st.balloons() # 
+        st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.") #
     st.markdown("---")
 
     # Botón de reinicio que asegura el borrado de respuestas y el scroll al top
@@ -999,3 +1011,4 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
+
