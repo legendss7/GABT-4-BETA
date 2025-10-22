@@ -948,72 +948,38 @@ def vista_resultados():
             """, unsafe_allow_html=True)
 
     st.markdown("---")
-# --- 5. PLAN DE DESARROLLO ---
-# NOTA: Asegúrate de que las variables 'ideal_jobs', 'non_ideal_jobs' y 'df_resultados'
-# estén definidas en el alcance de 'vista_resultados'
-with st.container(border=True):
-    st.subheader("5. Recomendaciones de Rol y Plan de Desarrollo")
 
-    # -----------------------------------------------------------
-    # A. CARGOS IDEALES (Alto Potencial de Adecuación)
-    # -----------------------------------------------------------
-    st.markdown("### 🏆 Roles Ideales (Alto Potencial de Adecuación)")
-    st.info("Estos roles cumplen con al menos el 80% de los requisitos mínimos de aptitud establecidos.")
-    
-    if ideal_jobs:
-        # Aquí se usa la lista de cargos ideales devuelta por la función
-        for job in ideal_jobs:
-            st.success(f"**{job}**", icon="✅")
-    else:
-        st.warning("No se identificaron cargos con un alto nivel de adecuación (match ≥ 80%). Se recomienda enfocar el desarrollo en áreas de alta prioridad antes de la aplicación.")
+    # --- 5. PLAN DE DESARROLLO ---
+    with st.container(border=True):
+        st.subheader("5. Potencial de Rol y Plan de Desarrollo")
+        
+        st.markdown(f"""
+        <div style="padding: 15px; border: 1px solid #003366; background-color: #f0f8ff; border-radius: 10px; margin-bottom: 20px;">
+            <h5 style="margin-top: 0; color: #003366;">Potencial Ocupacional Recomendado (Enfoque Primario)</h5>
+            <p style="font-size: 1.1em; font-weight: bold;">{analisis['potencial']}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("#### **Estrategias Individualizadas de Desarrollo**")
+        st.info("Plan de acción basado en las aptitudes con percentiles bajos (≤ 40%) o aquellas que requieran mejora continua.")
+        
+        bottom_areas = df_resultados[df_resultados['Percentil'] <= 40]['Área'].tolist()
+        
+        if bottom_areas:
+            for area in bottom_areas:
+                estrategia = get_estrategias_de_mejora(area)
+                with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True):
+                    st.markdown(f"**Nivel de Prioridad:** **ALTA**")
+                    st.markdown(f"**Plan de Acción Sugerido:** {estrategia}")
+        else:
+            st.balloons()
+            st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.")
+
 
     st.markdown("---")
-
-    # -----------------------------------------------------------
-    # B. CARGOS NO IDEALES (Bajo Match y Requisitos Críticos Fallidos)
-    # -----------------------------------------------------------
-    st.markdown("### ❌ Roles No Ideales (Bajo Match y Requisitos Críticos Fallidos)")
-    st.info("Estos roles presentaron un nivel de adecuación bajo. A continuación, se detallan las **3 aptitudes críticas** (con el requisito más alto) que el candidato no cumplió.")
-    
-    if non_ideal_jobs:
-        # Aquí se usa el diccionario de cargos no ideales con sus razones
-        for job, fallas in non_ideal_jobs.items():
-            with st.expander(f"**{job}**"):
-                st.markdown(f"**Aptitudes Críticas Faltantes:**")
-                # Las fallas vienen preformateadas como una cadena separada por '; '
-                for falla in fallas.split("; "):
-                     st.markdown(f"- 🔴 {falla.strip()}")
-    else:
-        st.balloons()
-        st.success("¡Excelente! El candidato cumple al menos con el 80% de los requisitos mínimos para **todos** los perfiles laborales analizados.")
-
-    st.markdown("---")
-    
-    # -----------------------------------------------------------
-    # C. ESTRATEGIAS DE DESARROLLO INDIVIDUALIZADO (Se mantiene igual)
-    # -----------------------------------------------------------
-    st.markdown("#### **Estrategias Individualizadas de Desarrollo**")
-    st.info("Plan de acción basado en las aptitudes con percentiles bajos (≤ 40%) o aquellas que requieran mejora continua.")
-    
-    bottom_areas = df_resultados[df_resultados['Percentil'] <= 40]['Área'].tolist()
-    
-    if bottom_areas:
-        for area in bottom_areas:
-            # Se asume que get_estrategias_de_mejora existe y se alimenta del área
-            estrategia = get_estrategias_de_mejora(area)
-            with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True):
-                st.markdown(f"**Nivel de Prioridad:** **ALTA**")
-                st.markdown(f"**Plan de Acción Sugerido:** {estrategia}")
-    else:
-        st.balloons()
-        st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.")
-
-
-st.markdown("---")
-    
 
     # Botón de reinicio que asegura el borrado de respuestas y el scroll al top
-st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=reiniciar_test, use_container_width=True)
+    st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=reiniciar_test, use_container_width=True)
 
 # --- 6. CONTROL DEL FLUJO PRINCIPAL Y SCROLL FORZADO ---
 
@@ -1033,6 +999,3 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
-
-
-
