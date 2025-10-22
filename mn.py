@@ -48,10 +48,23 @@ def calificar_global(avg_percentil):
     elif avg_percentil >= 40: return "Perfil Competitivo 💼", "El perfil se sitúa en el promedio superior, demostrando suficiencia en todas las áreas. Apto para la mayoría de roles operativos y de coordinación.", "#ff8c00"
     else: return "Período de Desarrollo 🛠️", "El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave. Se recomienda comenzar con roles de soporte y entrenamiento continuo.", "#dc143c"
 
+# --- MODIFICACIÓN: FUNCIÓN PARA GENERAR PERFILES ALEATORIOS ---
+def generate_random_percentiles():
+    """Genera un diccionario de percentiles aleatorios para simular un perfil variable."""
+    random_percentiles = {}
+    # Usamos la hora actual como semilla para asegurar un perfil diferente en cada clic
+    np.random.seed(int(time.time() * 1000) % 2**32) 
+    for area in AREAS:
+        # Generar percentiles entre 30 y 95 para que el perfil sea "interesante" (no todo 5%)
+        percentil = np.random.randint(30, 95) 
+        random_percentiles[area] = percentil
+    return random_percentiles
+# --- FIN MODIFICACIÓN ---
+
 def generate_gatb_questions():
-    """Genera preguntas simuladas, corregidas y profesionales."""
+    """Genera preguntas simuladas, corregidas y profesionales. (El detalle se omite por brevedad)"""
     
-    # --- PREGUNTAS ACTUALIZADAS Y CORREGIDAS ---
+    # --- PREGUNTAS ACTUALIZADAS Y CORREGIDAS (Mismo Contenido) ---
     detailed_questions = {
         "Razonamiento General": [
             {"pregunta": "(Silogismo) Todos los analistas son metódicos. Ningún creativo es analista. ¿Qué se deduce lógicamente con certeza?", 
@@ -184,7 +197,7 @@ def generate_gatb_questions():
              "opciones": {"a": "Sistema/Sistema", "b": "Proceso/Proseso", "c": "Análisis/Analisis", "d": "Gerencia/Gerenciaa"}}
         ],
         "Precisión Manual": [
-            {"pregunta": "(Simulación de Trazo Fino) Si el objetivo es un punto de 0 mm, ¿cuál es la desviación más precisa?", 
+            {"pregunta": "(Simulación de Trazo Fino) Si el objetivo es un punto de 0 mm, ¿ cuál es la desviación más precisa?", 
              "opciones": {"a": "Punto A (desviación de 0.5 mm)", "b": "Punto B (desviación de 2.0 mm)", "c": "Punto C (desviación de 5.0 mm)", "d": "Punto D (desviación de 1.0 mm)"}},
             {"pregunta": "(Simulación de Ensamblaje) ¿Qué micro-pieza encaja perfectamente sin solapamiento en una ranura de 5.00 mm de ancho?", 
              "opciones": {"a": "Pieza con tolerancia de 5.00 ± 0.01 mm", "b": "Pieza con tolerancia de 5.10 mm", "c": "Pieza con margen de 4.90 mm", "d": "Pieza de 6.00 mm"}},
@@ -462,42 +475,80 @@ def siguiente_area():
         st.session_state.area_actual_index += 1
         set_stage('test_activo')
     else:
-        calcular_resultados()
+        calcular_resultados_con_respuestas()
         set_stage('resultados')
 
-def solve_all():
-    """Resuelve automáticamente todas las preguntas con la respuesta correcta (simulación) y navega a resultados."""
-    st.session_state.respuestas = {}
-    
-    for index, row in df_preguntas.iterrows():
-        pregunta_id = row['id']
-        st.session_state.respuestas[pregunta_id] = row['respuesta_correcta']
 
-    st.session_state.area_actual_index = len(AREAS) - 1
+def calcular_resultados_con_respuestas():
+    """Calcula el porcentaje de aciertos REAL basado en las respuestas del usuario (no es un percentil real)."""
     
-    calcular_resultados()
-    set_stage('resultados')
-
-def calcular_resultados():
-    """Calcula y almacena los resultados finales, incluyendo el percentil numérico. (Simulación de percentiles)"""
     resultados_data = []
     
-    # Simulación de resultados para que el informe sea interesante
-    np.random.seed(42) # Para resultados consistentes en la simulación
-    # Distribución de percentiles simulados para un perfil 'Gestor-Técnico'
-    simulated_percentiles = {
-        "Razonamiento General": 90, "Razonamiento Verbal": 80, "Razonamiento Numérico": 85,
-        "Razonamiento Espacial": 70, "Velocidad Perceptiva": 55, "Precisión Manual": 45,
-        "Coordinación Manual": 35, "Atención Concentrada": 65, "Razonamiento Mecánico": 75,
-        "Razonamiento Abstracto": 92, "Razonamiento Clerical": 95, "Razonamiento Técnico": 60
-    }
-
+    # 1. Calcular el porcentaje de aciertos real (Puntuación bruta / Total de preguntas)
     for area in AREAS:
-        # Usamos los percentiles simulados
-        percentil = simulated_percentiles.get(area, np.random.randint(20, 95))
+        preguntas_area = df_preguntas[df_preguntas['area'] == area]
+        aciertos_area = 0
+        
+        for index, row in preguntas_area.iterrows():
+            pregunta_id = row['id']
+            respuesta_correcta = row['respuesta_correcta']
+            respuesta_usuario = st.session_state.respuestas.get(pregunta_id)
+            
+            if respuesta_usuario == respuesta_correcta:
+                aciertos_area += 1
+        
+        porcentaje = (aciertos_area / N_PREGUNTAS_POR_AREA) * 100
+        # Mapeamos el porcentaje al percentil simulado para la clasificación (simplificación de baremo)
+        percentil = porcentaje 
+        
         clasificacion_val, clasificacion_texto = clasificar_percentil(percentil)
         
-        # Invertimos el cálculo para que el 'Porcentaje' coincida con el Percentil para fines de visualización simplificada.
+        resultados_data.append({
+            "Área": area,
+            "Código": APTITUDES_MAP[area]["code"],
+            "Puntuación Bruta": aciertos_area,
+            "Máxima Puntuación": N_PREGUNTAS_POR_AREA,
+            "Porcentaje (%)": float(f"{porcentaje:.1f}"),
+            "Percentil": float(percentil), 
+            "Clasificación": clasificacion_texto,
+            "Color": APTITUDES_MAP[area]["color"]
+        })
+    
+    st.session_state.resultados_df = pd.DataFrame(resultados_data)
+    st.session_state.is_navigating = False
+
+
+# --- NUEVA LÓGICA PARA EL BOTÓN SIMULADO ---
+def solve_all_simulated():
+    """Genera un perfil simulado aleatorio y navega directamente a los resultados, sin responder preguntas."""
+    st.session_state.respuestas = {}
+    
+    # Generar percentiles aleatorios
+    random_percentiles = generate_random_percentiles()
+    
+    # Calcular resultados usando los percentiles aleatorios
+    calcular_resultados(random_percentiles) 
+    
+    st.session_state.area_actual_index = len(AREAS) - 1
+    set_stage('resultados')
+
+def calcular_resultados(percentiles_map=None):
+    """Calcula y almacena los resultados finales. Usa un mapa de percentiles si se proporciona (aleatorio o fijo)."""
+    
+    # Si no se proporciona un mapa, usamos un perfil simulado por defecto (similar al anterior)
+    if percentiles_map is None:
+        percentiles_map = {
+            "Razonamiento General": 85, "Razonamiento Verbal": 75, "Razonamiento Numérico": 80,
+            "Razonamiento Espacial": 65, "Velocidad Perceptiva": 50, "Precisión Manual": 40,
+            "Coordinación Manual": 30, "Atención Concentrada": 60, "Razonamiento Mecánico": 70,
+            "Razonamiento Abstracto": 88, "Razonamiento Clerical": 90, "Razonamiento Técnico": 55
+        }
+    
+    resultados_data = []
+    
+    for area, percentil in percentiles_map.items():
+        clasificacion_val, clasificacion_texto = clasificar_percentil(percentil)
+        
         porcentaje = percentil
         aciertos_area = round((percentil / 100) * N_PREGUNTAS_POR_AREA) # Puntuación bruta simulada
         
@@ -514,6 +565,7 @@ def calcular_resultados():
     
     st.session_state.resultados_df = pd.DataFrame(resultados_data)
     st.session_state.is_navigating = False
+# --- FIN NUEVA LÓGICA ---
 
 
 # --- 3. COMPONENTES DE VISUALIZACIÓN Y GRÁFICOS ---
@@ -573,7 +625,7 @@ def get_analisis_detalle(df_resultados):
             "Razonamiento Técnico": "aplicación de conocimientos de electricidad, electrónica y mecánica.",
         }
         key_application = desc_map.get(row['Área'], "habilidades cognitivas generales.")
-        fortalezas_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Una habilidad sobresaliente en esta área sugiere un alto potencial para la **{key_application}**.</li>"
+        fortalezas_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Potencial alto para la **{key_application}**.</li>"
     fortalezas_text += "</ul>"
     
     # Bottom 3 a Mejorar
@@ -596,20 +648,26 @@ def get_analisis_detalle(df_resultados):
             "Razonamiento Técnico": "la aplicación práctica de conocimientos de electricidad o instrumentación.",
         }
         improvement_focus = desc_map_improvement.get(row['Área'], "la mejora de habilidades básicas.")
-        mejoras_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Esta área requiere enfoque. El entrenamiento debe priorizar **{improvement_focus}**.</li>"
+        mejoras_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Requiere enfoque en **{improvement_focus}**.</li>"
     mejoras_text += f"</ul>"
 
     # Potencial Ocupacional (Basado en el perfil simulado)
     top_area = top_3.iloc[0]['Área']
-    if top_area in ["Razonamiento Abstracto", "Razonamiento General", "Razonamiento Numérico"]:
+    
+    # Determinar el perfil base con la media de los top 3
+    avg_top_3 = top_3['Percentil'].mean()
+    if avg_top_3 >= 85 and top_area in ["Razonamiento Abstracto", "Razonamiento General", "Razonamiento Numérico"]:
         potencial = "Roles Estratégicos, de Análisis Avanzado, Liderazgo, I+D y Consultoría."
         perfil = "Alto Potencial Cognitivo (G-Factor) y Capacidad Analítica Avanzada."
-    elif top_area in ["Razonamiento Mecánico", "Razonamiento Espacial", "Razonamiento Técnico", "Coordinación Manual"]:
+    elif avg_top_3 >= 70 and top_area in ["Razonamiento Mecánico", "Razonamiento Espacial", "Razonamiento Técnico", "Coordinación Manual"]:
         potencial = "Roles de Ingeniería, Diseño, Mantenimiento Industrial, Arquitectura y Operación de Maquinaria Pesada."
         perfil = "Fuerte Perfil Técnico-Estructural y Habilidad Visomotora."
-    else:
+    elif avg_top_3 >= 60:
         potencial = "Roles Administrativos, de Control de Calidad, Logística, Soporte al Cliente y Operaciones de Detalle."
         perfil = "Sólido Perfil Operativo y de Detalle (Foco en Velocidad, Precisión y Atención)."
+    else:
+        potencial = "Roles de Entrenamiento y Soporte Operativo, con enfoque en desarrollo de aptitudes."
+        perfil = "Perfil Básico, con necesidad de fortalecer áreas clave para la competitividad."
 
     return {
         "fortalezas": fortalezas_text,
@@ -703,7 +761,7 @@ def vista_inicio():
         st.button("🚀 Iniciar Evaluación", type="primary", use_container_width=True, on_click=lambda: set_stage('test_activo')) 
 
         # Botón para la demostración
-        st.button("✨ Ver Informe Rápido (Demo)", type="secondary", use_container_width=True, on_click=solve_all)
+        st.button("✨ Ver Informe Rápido (Perfil Aleatorio)", type="secondary", use_container_width=True, on_click=solve_all_simulated)
 
 
 def vista_test_activo():
@@ -863,22 +921,22 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES (MODIFICADO A GRILLA) ---
+    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES (GRILLA REFORZADA) ---
+    # Se utiliza st.columns(2) para la grilla y st.info/st.warning para contener el texto.
     with st.container(border=True):
         st.subheader("4. Análisis Comparativo del Perfil")
         
-        # Se crean dos columnas para simular la grilla
         col_fortaleza, col_mejora = st.columns(2)
 
         with col_fortaleza:
             st.markdown('<h4 style="color: #008000;">🌟 Fortalezas Intrínsecas (Top 3)</h4>', unsafe_allow_html=True)
-            st.markdown(analisis['fortalezas'], unsafe_allow_html=True)
-            st.success("Estas aptitudes deben ser los pilares de la trayectoria profesional y la base para el entrenamiento de otras áreas.")
+            with st.info("Estas aptitudes deben ser los pilares de la trayectoria profesional y la base para el entrenamiento de otras áreas."):
+                 st.markdown(analisis['fortalezas'], unsafe_allow_html=True) 
 
         with col_mejora:
             st.markdown('<h4 style="color: #dc143c;">📉 Áreas de Oportunidad (Bottom 3)</h4>', unsafe_allow_html=True)
-            st.markdown(analisis['mejoras'], unsafe_allow_html=True)
-            st.error("Una puntuación baja en estas áreas puede limitar el potencial en roles específicos y requiere desarrollo.")
+            with st.warning("Una puntuación baja en estas áreas puede limitar el potencial en roles específicos y requiere desarrollo."):
+                st.markdown(analisis['mejoras'], unsafe_allow_html=True) 
 
     st.markdown("---")
 
