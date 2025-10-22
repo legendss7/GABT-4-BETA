@@ -49,49 +49,49 @@ def calificar_global(avg_percentil):
     else: return "Período de Desarrollo 🛠️", "El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave. Se recomienda comenzar con roles de soporte y entrenamiento continuo.", "#dc143c"
 
 def generate_gatb_questions():
-    """Genera preguntas simuladas originales y profesionales."""
+    """Genera preguntas simuladas, corregidas y profesionales."""
     
-    # --- PREGUNTAS ACTUALIZADAS Y PROFESIONALES ---
+    # --- PREGUNTAS ACTUALIZADAS Y CORREGIDAS ---
     detailed_questions = {
         "Razonamiento General": [
-            {"pregunta": "(Silogismo) Todos los analistas son metódicos. Ningún creativo es analista. ¿Qué se deduce lógicamente?", 
-             "opciones": {"a": "Ningún creativo es metódico.", "b": "Algunos metódicos no son creativos.", "c": "Todo metódico es analista.", "d": "Algunos creativos son metódicos."}},
-            {"pregunta": "Identifique el elemento que rompe la coherencia semántica en la siguiente serie: Efímero, Fugaz, Transitorio, Perpetuo, Breve.", 
+            {"pregunta": "(Silogismo) Todos los analistas son metódicos. Ningún creativo es analista. ¿Qué se deduce lógicamente con certeza?", 
+             "opciones": {"a": "Algunos metódicos no son creativos.", "b": "Ningún creativo es metódico.", "c": "Todo metódico es analista.", "d": "Algunos creativos son metódicos."}},
+            {"pregunta": "Identifique el elemento que rompe la coherencia semántica en la siguiente serie: Efímero, Fugaz, Transitorio, Breve, Perpetuo.", 
              "opciones": {"a": "Perpetuo", "b": "Efímero", "c": "Fugaz", "d": "Transitorio"}},
             {"pregunta": "Complete la analogía relacional: **Principio** es a **Postulado** como **Objetivo** es a:", 
              "opciones": {"a": "Meta", "b": "Resultado", "c": "Propósito", "d": "Medio"}},
             {"pregunta": "Encuentre el número que continúa la progresión geométrica con patrón de doble suma creciente: 1, 3, 7, 15, 31, ...", 
              "opciones": {"a": "63", "b": "47", "c": "61", "d": "58"}},
-            {"pregunta": "Si la afirmación 'La mayoría de los proyectos son exitosos' es falsa, ¿cuál de las siguientes es necesariamente verdadera?", 
-             "opciones": {"a": "Muchos proyectos no son exitosos.", "b": "Ningún proyecto es exitoso.", "c": "Todos los proyectos son fallidos.", "d": "Algunos proyectos son muy exitosos."}},
-            {"pregunta": "Un cliente devuelve un producto con falla A, que fue causada por un defecto B. Si no se soluciona B, el producto fallará de nuevo. ¿Cuál es la causa raíz?", 
-             "opciones": {"a": "El defecto B.", "b": "La falla A.", "c": "La devolución del cliente.", "d": "El producto devuelto."}},
+            {"pregunta": "Si la afirmación 'La mayoría de los proyectos son exitosos' es Falsa (es decir, el porcentaje de éxito es $\\le 50\\%$), ¿cuál de las siguientes es necesariamente Verdadera?", 
+             "opciones": {"a": "Muchos proyectos no son exitosos (el fracaso es superior al 50%).", "b": "Ningún proyecto es exitoso.", "c": "Todos los proyectos son fallidos.", "d": "Algunos proyectos son muy exitosos."}},
+            {"pregunta": "Un cliente devuelve un producto con falla A, que fue causada por un defecto de diseño B. Si no se soluciona B, el producto fallará de nuevo. ¿Cuál es la causa raíz?", 
+             "opciones": {"a": "El defecto B (Defecto de Diseño).", "b": "La falla A (Síntoma).", "c": "La devolución del cliente.", "d": "El producto devuelto."}},
             {"pregunta": "Un algoritmo usa tres condiciones: P (Verdadero), Q (Falso) y R (Verdadero). ¿Cuál es el valor lógico de la expresión (P AND Q) OR R?", 
              "opciones": {"a": "Verdadero", "b": "Falso", "c": "Depende de Q", "d": "Depende de P"}},
-            {"pregunta": "Si un vehículo recorre 18 km en 12 minutos, ¿cuánto tiempo tardará en recorrer 45 km a la misma velocidad constante?", 
+            {"pregunta": "Si un vehículo recorre 18 km en 12 minutos, ¿cuánto tiempo (en minutos) tardará en recorrer 45 km a la misma velocidad constante?", 
              "opciones": {"a": "30 minutos", "b": "25 minutos", "c": "32 minutos", "d": "40 minutos"}},
-            {"pregunta": "La figura A es una variante incompleta de la figura B. Para completarla, se debe aplicar el concepto de:", 
-             "opciones": {"a": "Simetría axial", "b": "Rotación de 90°", "c": "Inversión cromática", "d": "Extensión lineal"}},
+            {"pregunta": "La figura A es una variante incompleta de la figura B (simetría simple). Para completarla, se debe aplicar el concepto de:", 
+             "opciones": {"a": "Simetría axial.", "b": "Rotación de 90°.", "c": "Inversión cromática.", "d": "Extensión lineal."}},
             {"pregunta": "Si M está a la izquierda de N, y O está a la derecha de P, y P está a la derecha de N. ¿Cuál es el orden de izquierda a derecha?", 
              "opciones": {"a": "M, N, P, O", "b": "N, M, P, O", "c": "P, N, M, O", "d": "O, P, N, M"}},
             {"pregunta": "El concepto de 'Entropía' en la termodinámica se relaciona mejor con el principio de:", 
-             "opciones": {"a": "Desorden y tendencia al equilibrio", "b": "Conservación de la energía", "c": "Transferencia de calor por convección", "d": "Trabajo y potencia"}},
+             "opciones": {"a": "Desorden y tendencia al equilibrio.", "b": "Conservación de la energía.", "c": "Transferencia de calor por convección.", "d": "Trabajo y potencia."}},
             {"pregunta": "En la frase 'El comité **consideró** la propuesta cuidadosamente', la palabra resaltada implica una acción de:", 
              "opciones": {"a": "Evaluación", "b": "Aprobación", "c": "Descarte", "d": "Presentación"}}
         ],
         "Razonamiento Verbal": [
             {"pregunta": "Sinónimo contextual más adecuado para la palabra **'Acuciante'** en la frase: 'Una necesidad acuciante de liquidez'.", 
              "opciones": {"a": "Apremiante", "b": "Molesta", "c": "Lejana", "d": "Extraña"}},
-            {"pregunta": "Antónimo más preciso de la palabra **'Prosaico'**:", 
+            {"pregunta": "Antónimo más preciso de la palabra **'Prosaico'** (Común, Vulgar):", 
              "opciones": {"a": "Exquisito", "b": "Ordinario", "c": "Simple", "d": "Común"}},
-            {"pregunta": "Elija la analogía correcta: **Escultor** es a **Cincel** como **Escritor** es a:", 
+            {"pregunta": "Elija la analogía correcta: **Escultor** es a **Cincel** (Herramienta) como **Escritor** es a:", 
              "opciones": {"a": "Pluma", "b": "Libro", "c": "Lector", "d": "Tinta"}},
             {"pregunta": "Definición más exacta de la palabra **'Recalcitrante'**:", 
              "opciones": {"a": "Terco, opuesto a obedecer o cambiar.", "b": "Que se repite con frecuencia.", "c": "Que carece de color.", "d": "Que es muy antiguo."}},
             {"pregunta": "La frase **'Hacer mutis por el foro'** en lenguaje coloquial significa:", 
              "opciones": {"a": "Retirarse discretamente de un lugar.", "b": "Hablar en voz baja.", "c": "Asumir un papel principal.", "d": "Aparecer de repente."}},
-            {"pregunta": "Identifique el error de concordancia en la frase:", 
-             "opciones": {"a": "La gente estuvo de acuerdo con los resultados.", "b": "Los libros y las revistas está organizado.", "c": "Los informes fueron revisados.", "d": "Mi equipo y yo viajamos."}},
+            {"pregunta": "Identifique la frase que contiene un error de concordancia gramatical.", 
+             "opciones": {"a": "Los libros y las revistas está organizado.", "b": "La gente estuvo de acuerdo con los resultados.", "c": "Los informes fueron revisados.", "d": "Mi equipo y yo viajamos."}},
             {"pregunta": "Elija el prefijo que significa **'totalidad'** o **'entero'**:", 
              "opciones": {"a": "Omni-", "b": "Hipo-", "c": "Extra-", "d": "Sub-"}},
             {"pregunta": "La palabra **'Exacerbar'** significa:", 
@@ -99,10 +99,10 @@ def generate_gatb_questions():
             {"pregunta": "Sustituya la palabra **'Inefable'** en la frase: 'Una belleza inefable.'", 
              "opciones": {"a": "Indescriptible", "b": "Fea", "c": "Común", "d": "Oscura"}},
             {"pregunta": "El término **'Pleonasmo'** se refiere a:", 
-             "opciones": {"a": "Uso de palabras innecesarias que refuerzan lo dicho.", "b": "Elipsis de una palabra.", "c": "Comparación directa.", "d": "Metáfora."}},
+             "opciones": {"a": "Uso de palabras innecesarias que refuerzan lo dicho (Ej: Subir arriba).", "b": "Elipsis de una palabra.", "c": "Comparación directa.", "d": "Metáfora."}},
             {"pregunta": "Una persona **'lúcida'** es aquella que posee:", 
              "opciones": {"a": "Claridad mental y raciocinio.", "b": "Mucha fuerza física.", "c": "Poca energía.", "d": "Una voz muy fuerte."}},
-            {"pregunta": "Elija el concepto que **NO** se relaciona con la retórica:", 
+            {"pregunta": "Elija el concepto que **NO** se relaciona con la retórica (Arte del discurso):", 
              "opciones": {"a": "Aritmética", "b": "Persuasión", "c": "Oratoria", "d": "Discurso"}}
         ],
         "Razonamiento Numérico": [
@@ -114,7 +114,7 @@ def generate_gatb_questions():
              "opciones": {"a": "$8\\pi$ cm", "b": "$4\\pi$ cm", "c": "$16\\pi$ cm", "d": "$32\\pi$ cm"}},
             {"pregunta": "Un inversor compra acciones por $1200 y las vende por $1500. ¿Cuál es el porcentaje de ganancia sobre el costo?", 
              "opciones": {"a": "25%", "b": "20%", "c": "30%", "d": "15%"}},
-            {"pregunta": "¿Qué número continúa la serie cuadrática: 2, 5, 10, 17, 26, ...?", 
+            {"pregunta": "¿Qué número continúa la serie cuadrática: $n^2+1$: 2, 5, 10, 17, 26, ...?", 
              "opciones": {"a": "37", "b": "35", "c": "40", "d": "39"}},
             {"pregunta": "Si un automóvil gasta 5 litros de combustible para recorrer 60 km, ¿cuántos litros necesita para un viaje de 180 km?", 
              "opciones": {"a": "15 litros", "b": "12 litros", "c": "18 litros", "d": "20 litros"}},
@@ -124,7 +124,7 @@ def generate_gatb_questions():
              "opciones": {"a": "$100.00", "b": "$99.00", "c": "$105.00", "d": "$95.00"}},
             {"pregunta": "Calcule el volumen de un prisma rectangular con dimensiones de 4 cm x 5 cm x 10 cm.", 
              "opciones": {"a": "$200 \\text{ cm}^3$", "b": "$190 \\text{ cm}^3$", "c": "$180 \\text{ cm}^3$", "d": "$90 \\text{ cm}^3$"}},
-            {"pregunta": "Si 8 obreros tardan 6 días en hacer una zanja, ¿cuánto tardarán 4 obreros con la misma eficiencia?", 
+            {"pregunta": "Si 8 obreros tardan 6 días en hacer una zanja, ¿cuánto tardarán 4 obreros con la misma eficiencia? (Regla de 3 Inversa)", 
              "opciones": {"a": "12 días", "b": "10 días", "c": "8 días", "d": "9 días"}},
             {"pregunta": "El promedio de 4 números es 15. Si se añade un quinto número (25), ¿cuál es el nuevo promedio?", 
              "opciones": {"a": "17", "b": "18", "c": "19", "d": "20"}},
@@ -132,96 +132,96 @@ def generate_gatb_questions():
              "opciones": {"a": "167", "b": "162", "c": "157", "d": "170"}}
         ],
         "Razonamiento Espacial": [
-            {"pregunta": "(Visualización 3D) Si se rota un cubo 90° sobre su eje vertical (eje Y) y luego se invierte verticalmente (eje X), ¿cuál es la orientación de la cara superior (Simulación)?", 
-             "opciones": {"a": "Queda en la posición frontal izquierda.", "b": "Queda en la posición inferior.", "c": "Vuelve a la posición original.", "d": "Queda en la posición frontal derecha."}},
-            {"pregunta": "Identifique la figura que corresponde a la vista en planta (superior) de un cono truncado (Simulación).", 
+            {"pregunta": "(Rotación 3D) Un cubo se rota 90° sobre su eje vertical (Eje Y) y luego se invierte verticalmente (Eje X). Si la cara superior original tenía una marca, ¿cuál es la nueva posición y orientación de esa marca?", 
+             "opciones": {"a": "La marca queda en la posición frontal izquierda del cubo con una rotación de 90°.", "b": "La marca queda en la posición inferior.", "c": "La marca vuelve a la posición original.", "d": "La marca queda en la posición frontal derecha."}},
+            {"pregunta": "Identifique la figura que corresponde a la vista en planta (superior) de un cono truncado (es decir, cortado paralelamente a la base).", 
              "opciones": {"a": "Dos círculos concéntricos.", "b": "Un círculo con una línea central.", "c": "Un óvalo.", "d": "Un cuadrado."}},
-            {"pregunta": "Al desdoblar un patrón de papel doblado en tercios y cortado con una forma de diamante en el centro, ¿cuántos cortes se aprecian?", 
-             "opciones": {"a": "Tres cortes de diamante alineados.", "b": "Dos cortes de diamante.", "c": "Un solo corte grande.", "d": "Cuatro cortes de diamante."}},
-            {"pregunta": "De un set de 4 piezas, ¿cuál es la pieza faltante para completar un cuadrado perfecto mediante el proceso de teselación?", 
-             "opciones": {"a": "La pieza que completa la geometría y encaja.", "b": "Una pieza simétrica al original.", "c": "La pieza más pequeña.", "d": "Una pieza con curva."}},
+            {"pregunta": "Al desdoblar un patrón de papel doblado por la mitad y cortado con una 'media luna' en el doblez, ¿cuántos cortes se aprecian y con qué forma?", 
+             "opciones": {"a": "Un círculo completo en el centro.", "b": "Dos medias lunas separadas.", "c": "Un óvalo grande.", "d": "Ningún corte."}},
+            {"pregunta": "De un set de 4 piezas que forman un cuadrado incompleto, ¿cuál es la pieza faltante para completar un cuadrado perfecto mediante el proceso de teselación?", 
+             "opciones": {"a": "La pieza que completa la geometría y encaja con la forma opuesta del corte.", "b": "Una pieza simétrica al original.", "c": "La pieza más pequeña.", "d": "Una pieza con curva."}},
             {"pregunta": "Si un objeto se ilumina desde el lado superior derecho, ¿hacia dónde se proyectará la sombra de mayor longitud?", 
              "opciones": {"a": "Hacia el lado inferior izquierdo.", "b": "Directamente hacia abajo.", "c": "Hacia el lado superior izquierdo.", "d": "Hacia el centro."}},
-            {"pregunta": "Cuál es el resultado de superponer un triángulo equilátero sobre un cuadrado, alineando sus bases (Simulación).", 
-             "opciones": {"a": "Un pentágono irregular.", "b": "Un hexágono.", "c": "Un trapecio.", "d": "Un rectángulo."}},
+            {"pregunta": "Cuál es la forma que resulta de superponer un triángulo equilátero sobre un cuadrado, alineando exactamente sus bases.", 
+             "opciones": {"a": "Un pentágono irregular de cinco lados.", "b": "Un hexágono.", "c": "Un trapecio.", "d": "Un rectángulo."}},
             {"pregunta": "Una flecha apunta al Norte. Si gira 135° en sentido horario, ¿hacia dónde apunta ahora?", 
              "opciones": {"a": "Sureste", "b": "Noreste", "c": "Suroeste", "d": "Oeste"}},
-            {"pregunta": "Elija la representación bidimensional que se obtiene al cortar un cilindro por un plano diagonal (Simulación).", 
+            {"pregunta": "Elija la representación bidimensional que se obtiene al cortar un cilindro por un plano diagonal.", 
              "opciones": {"a": "Un óvalo (elipse).", "b": "Un círculo.", "c": "Un rectángulo.", "d": "Un trapezoide."}},
-            {"pregunta": "Si la figura de un reloj se refleja en un espejo horizontal (eje X), ¿la imagen reflejada mantendrá la misma hora si es simétrica?", 
-             "opciones": {"a": "Sí, si la hora es simétrica (Ej: 9:00, 3:00).", "b": "No, siempre cambia.", "c": "Sí, en todas las horas.", "d": "Solo si es un reloj digital."}},
-            {"pregunta": "Determine la figura que se obtiene al unir un cubo y una pirámide cuadrada por sus bases, sin solapamiento.", 
-             "opciones": {"a": "Un poliedro de 9 caras.", "b": "Un dodecaedro.", "c": "Un prisma hexagonal.", "d": "Un cono."}},
-            {"pregunta": "Cuál de estas formas planas NO puede formar un poliedro al doblarse: Un triángulo, un cuadrado, o un patrón en forma de T.", 
+            {"pregunta": "Si se mira la letra 'F' reflejada en un espejo horizontal (eje X), ¿qué transformación espacial se produce?", 
+             "opciones": {"a": "Reflexión vertical (arriba-abajo).", "b": "Reflexión horizontal (izquierda-derecha).", "c": "Rotación de 180°.", "d": "Traslación."}},
+            {"pregunta": "Al unir un cubo y una pirámide cuadrada por sus bases, la figura resultante tendrá un total de:", 
+             "opciones": {"a": "9 caras y 9 vértices.", "b": "8 caras y 10 vértices.", "c": "10 caras y 8 vértices.", "d": "12 caras y 10 vértices."}},
+            {"pregunta": "Cuál de estas formas planas NO puede formar un poliedro convexo al doblarse: Un triángulo, un cuadrado, o un patrón en forma de T.", 
              "opciones": {"a": "La forma en T.", "b": "El cuadrado.", "c": "El triángulo.", "d": "Cualquiera puede formarlo."}},
             {"pregunta": "Si la figura A está a la izquierda de B, y B está rotada 45° con respecto a C. ¿Cuál es la relación espacial más probable entre A y C?", 
-             "opciones": {"a": "A está ligeramente desalineada con C.", "b": "A está directamente encima de C.", "c": "A está directamente debajo de C.", "d": "A y C son paralelas."}}
+             "opciones": {"a": "A está ligeramente desalineada y a la izquierda de C.", "b": "A está directamente encima de C.", "c": "A está directamente debajo de C.", "d": "A y C son paralelas."}}
         ],
         "Velocidad Perceptiva": [
-            {"pregunta": "Identifique el código IDÉNTICO a 58R39A-JL45B, sin errores de tipografía o espaciado:", 
+            {"pregunta": "Identifique el código IDÉNTICO a **58R39A-JL45B**, sin errores de tipografía o espaciado:", 
              "opciones": {"a": "58R39A-JL45B", "b": "58R39A JL45B", "c": "58B39A-JL45B", "d": "58R39A-JLA5B"}},
-            {"pregunta": "¿Cuál de las siguientes direcciones postales es DIFERENTE a las demás?:", 
-             "opciones": {"a": "Av. Colón 1234, Of. 5B", "b": "Av. Colon 1234, Of. 5B", "c": "Av. Colón 1234, Of. 5B", "d": "Av. Colón 1234, Of. 5B"}},
-            {"pregunta": "Encuentre el único número que NO contiene el dígito '7' en la siguiente lista:", 
+            {"pregunta": "Identifique la dirección postal que es IDÉNTICA a las demás de la lista, sin errores de tilde o espaciado (la que se repite exactamente).", 
+             "opciones": {"a": "Av. Colón 1234, Of. 5B", "b": "Av. Colon 1234, Of. 5B", "c": "Av. Colón 1234, Of. 5C", "d": "Av. Colón 1234, Of. 5B "}},
+            {"pregunta": "Encuentre el único número que NO contiene el dígito '7' en la siguiente lista: 75421, 67390, 12753, 54826.", 
              "opciones": {"a": "54826", "b": "75421", "c": "67390", "d": "12753"}},
-            {"pregunta": "¿Cuántos errores de mayúsculas (minúscula donde va mayúscula o viceversa) hay en la frase: 'El sistema de gestión de calidaD (SGC)'?", 
-             "opciones": {"a": "1", "b": "2", "c": "0", "d": "3"}},
+            {"pregunta": "¿Cuántos errores de mayúsculas o minúsculas (sin incluir la letra 'D' final) hay en la frase: 'El sistema de gestión de calidaD (SGC)'?", 
+             "opciones": {"a": "1 ('de gestión' no debe ir en minúsculas en un título)", "b": "2", "c": "0", "d": "3"}},
             {"pregunta": "Busque la secuencia de letras que NO se repite en la siguiente fila: XYZ, ABC, XYZ, CBA, XYZ, ABC.", 
              "opciones": {"a": "CBA", "b": "XYZ", "c": "ABC", "d": "Todas se repiten."}},
             {"pregunta": "Compare las cifras: 1.567.890 vs 1'567'890. ¿Son iguales o diferentes en valor numérico?", 
              "opciones": {"a": "Iguales", "b": "Diferentes", "c": "Depende de la región", "d": "No se puede determinar"}},
-            {"pregunta": "¿Cuál de estos nombres y apellidos está mal transcrito respecto a 'Martínez Pérez, Juan G.'?", 
+            {"pregunta": "Elija la única opción que contiene un error de transcripción o acentuación respecto a 'Martínez Pérez, Juan G.'", 
              "opciones": {"a": "Martinez Peréz, Juan G.", "b": "Martínez Pérez, Juan G.", "c": "Martínez Pérez, Juan G.", "d": "Martínez Pérez, Juan G."}},
             {"pregunta": "Encuentre el código de producto que NO es alfanumérico (solo números):", 
              "opciones": {"a": "789012", "b": "A789B", "c": "890C12", "d": "D789E"}},
             {"pregunta": "¿Cuántas veces aparece la conjunción 'que' en el siguiente texto corto? 'Dile que venga y que traiga el informe que te pedí'", 
              "opciones": {"a": "3", "b": "2", "c": "4", "d": "1"}},
-            {"pregunta": "Identifique el número de factura que coincide exactamente con: INV-2024/05-334", 
+            {"pregunta": "Identifique el número de factura que coincide exactamente con: **INV-2024/05-334**", 
              "opciones": {"a": "INV-2024/05-334", "b": "INV-2024/05-343", "c": "INB-2024/05-334", "d": "INV-2024/05-330"}},
             {"pregunta": "Localice el único símbolo diferente entre: # # # @ # # #", 
              "opciones": {"a": "@", "b": "#", "c": "No hay diferente", "d": "Depende del contexto"}},
-            {"pregunta": "¿Cuál de las siguientes parejas de palabras es idéntica?:", 
+            {"pregunta": "¿Cuál de las siguientes parejas de palabras es idéntica (sin errores de ortografía o acentuación)?:", 
              "opciones": {"a": "Sistema/Sistema", "b": "Proceso/Proseso", "c": "Análisis/Analisis", "d": "Gerencia/Gerenciaa"}}
         ],
         "Precisión Manual": [
-            {"pregunta": "(Simulación de Trazo Fino) Elija el punto que se encuentra a 0.5 mm del centro del objetivo (Simulación gráfica).", 
-             "opciones": {"a": "Punto A (más cercano al centro)", "b": "Punto B", "c": "Punto C", "d": "Punto D (más alejado)"}},
-            {"pregunta": "(Simulación de Ensamblaje) Identifique la micro-pieza que encaja perfectamente sin solapamiento en la ranura (Simulación gráfica).", 
-             "opciones": {"a": "Pieza con tolerancia de 0.01mm", "b": "Pieza con tolerancia de 0.1mm", "c": "Pieza con margen de 1mm", "d": "Pieza demasiado grande"}},
-            {"pregunta": "(Simulación de Alineación) Seleccione el par de líneas paralelas cuya separación es constante y exacta (Simulación gráfica).", 
-             "opciones": {"a": "Líneas A (mejor alineación)", "b": "Líneas B", "c": "Líneas C", "d": "Líneas D (desviación visible)"}},
-            {"pregunta": "(Simulación de Medición) Un vernier marca 45.20 mm. ¿Cuál es el error de lectura si el objeto real mide 45.25 mm?", 
+            {"pregunta": "(Simulación de Trazo Fino) Si el objetivo es un punto de 0 mm, ¿cuál es la desviación más precisa?", 
+             "opciones": {"a": "Punto A (desviación de 0.5 mm)", "b": "Punto B (desviación de 2.0 mm)", "c": "Punto C (desviación de 5.0 mm)", "d": "Punto D (desviación de 1.0 mm)"}},
+            {"pregunta": "(Simulación de Ensamblaje) ¿Qué micro-pieza encaja perfectamente sin solapamiento en una ranura de 5.00 mm de ancho?", 
+             "opciones": {"a": "Pieza con tolerancia de 5.00 ± 0.01 mm", "b": "Pieza con tolerancia de 5.10 mm", "c": "Pieza con margen de 4.90 mm", "d": "Pieza de 6.00 mm"}},
+            {"pregunta": "(Simulación de Alineación) Seleccione el par de líneas paralelas cuya separación es constante y exacta a 1 cm en toda su longitud.", 
+             "opciones": {"a": "Líneas A (mejor alineación, 1.0 cm constante)", "b": "Líneas B (separación variable 0.8 cm - 1.2 cm)", "c": "Líneas C (separación de 2 cm)", "d": "Líneas D (desviación visible y gradual)"}},
+            {"pregunta": "(Simulación de Medición) Un vernier marca 45.20 mm. ¿Cuál es el error de lectura si el objeto real (patrón) mide 45.25 mm?", 
              "opciones": {"a": "0.05 mm por defecto", "b": "0.05 mm por exceso", "c": "0.20 mm", "d": "0.25 mm"}},
-            {"pregunta": "(Simulación de Detalle) ¿Cuál de los siguientes dibujos a escala tiene el mayor nivel de detalle de las uniones?", 
-             "opciones": {"a": "Dibujo A (mayor densidad de líneas)", "b": "Dibujo B", "c": "Dibujo C", "d": "Dibujo D (boceto)"}},
-            {"pregunta": "(Simulación de Recorte) Se requiere un corte de papel a lo largo de una curva de radio 10 cm. ¿Cuál trazo demuestra la mayor consistencia?", 
-             "opciones": {"a": "Trazo 1 (radio uniforme)", "b": "Trazo 2 (radio variable)", "c": "Trazo 3 (línea recta)", "d": "Trazo 4 (línea entrecortada)"}},
-            {"pregunta": "(Simulación de Manipulación) Para realizar una soldadura de precisión en un componente SMD (dispositivo de montaje superficial), ¿qué cualidad es más crítica?", 
-             "opciones": {"a": "Pulso firme y control microscópico.", "b": "Rapidez en el movimiento.", "c": "Fuerza manual.", "d": "Resistencia a la temperatura."}},
-            {"pregunta": "(Simulación de Pintura) Seleccione el área donde la aplicación del pigmento respeta el límite exacto del borde (Simulación gráfica).", 
-             "opciones": {"a": "Área 1 (sin desbordes)", "b": "Área 2 (ligero desborde)", "c": "Área 3 (gran desborde)", "d": "Área 4 (incompleta)"}},
+            {"pregunta": "(Simulación de Detalle) ¿Cuál de los siguientes dibujos a escala tiene la mayor densidad de líneas y representación de uniones?", 
+             "opciones": {"a": "Dibujo A (mayor densidad de líneas y uniones complejas)", "b": "Dibujo B (boceto simple)", "c": "Dibujo C (solo contorno)", "d": "Dibujo D (baja resolución)"}},
+            {"pregunta": "(Simulación de Recorte) Se requiere un corte de papel a lo largo de una curva de radio 10 cm. ¿Qué trazo demuestra la mayor consistencia del pulso?", 
+             "opciones": {"a": "Trazo 1 (radio uniforme de 10.0 cm)", "b": "Trazo 2 (radio variable 9.5 cm - 10.5 cm)", "c": "Trazo 3 (línea recta)", "d": "Trazo 4 (línea entrecortada)"}},
+            {"pregunta": "(Simulación de Manipulación) Para realizar una soldadura de precisión en un componente SMD (dispositivo de montaje superficial), ¿qué cualidad de pulso es más crítica?", 
+             "opciones": {"a": "Pulso firme y control microscópico (estabilidad estática).", "b": "Rapidez en el movimiento.", "c": "Fuerza manual.", "d": "Resistencia a la temperatura."}},
+            {"pregunta": "(Simulación de Pintura) Seleccione el área donde la aplicación del pigmento respeta el límite exacto del borde sin desbordes.", 
+             "opciones": {"a": "Área 1 (sin desbordes ni espacios)", "b": "Área 2 (ligero desborde)", "c": "Área 3 (gran desborde)", "d": "Área 4 (incompleta)"}},
             {"pregunta": "(Simulación de Equilibrio) Al colocar un objeto pequeño sobre una superficie, ¿qué posición minimiza el riesgo de caída por inestabilidad?", 
              "opciones": {"a": "La posición con la base más amplia y centro de gravedad bajo.", "b": "La posición con la base más pequeña.", "c": "La posición vertical alta.", "d": "Cualquier posición es estable."}},
-            {"pregunta": "(Simulación de Enfoque) Para leer un texto de letra muy pequeña, ¿qué factor de visión es más relevante?", 
-             "opciones": {"a": "Agudeza visual y capacidad de enfoque.", "b": "Visión periférica.", "c": "Velocidad de lectura.", "d": "Visión de colores."}},
-            {"pregunta": "(Simulación de Trazado) Dibuje una circunferencia de 3 cm de diámetro. ¿Qué resultado es el más preciso con respecto al radio?", 
+            {"pregunta": "(Simulación de Enfoque) Para leer un texto de letra muy pequeña (4 puntos), ¿qué factor de visión es más relevante?", 
+             "opciones": {"a": "Agudeza visual y capacidad de enfoque (acomodación).", "b": "Visión periférica.", "c": "Velocidad de lectura.", "d": "Visión de colores."}},
+            {"pregunta": "(Simulación de Trazado) Se pide dibujar una circunferencia de 3 cm de diámetro. ¿Qué resultado es el más preciso con respecto al radio?", 
              "opciones": {"a": "Un radio de 1.5 cm.", "b": "Un radio de 3.0 cm.", "c": "Un diámetro de 1.5 cm.", "d": "Un radio de 2.0 cm."}},
-            {"pregunta": "(Simulación) ¿Cuál es el movimiento de mano requerido para introducir un hilo en el ojo de una aguja?", 
+            {"pregunta": "(Simulación) ¿Cuál es la cualidad de movimiento de mano requerida para introducir un hilo en el ojo de una aguja?", 
              "opciones": {"a": "Movimiento lento, controlado y preciso.", "b": "Movimiento rápido y brusco.", "c": "Movimiento de rotación.", "d": "Movimiento de barrido."}}
         ],
         "Coordinación Manual": [
-            {"pregunta": "(Simulación de Patrón) Para replicar el patrón rítmico 'Palmada-Golpe-Silencio', ¿qué combinación motora requiere la mejor coordinación?", 
-             "opciones": {"a": "Sincronización de manos y cuerpo con pausas temporales.", "b": "Solo coordinación de manos.", "c": "Solo coordinación de voz.", "d": "Coordinación de pies."}},
-            {"pregunta": "(Simulación de Trayectoria) Si debe seguir una línea curva y un punto de cruce simultáneamente, ¿qué tipo de control se exige?", 
+            {"pregunta": "(Simulación de Patrón) Para replicar el patrón rítmico 'Palmada-Golpe-Silencio' en un orden exacto, ¿qué cualidad motora es más demandada?", 
+             "opciones": {"a": "Sincronización de manos y cuerpo con pausas temporales (Ritmo y Timing).", "b": "Solo coordinación de manos.", "c": "Solo coordinación de voz.", "d": "Coordinación de pies."}},
+            {"pregunta": "(Simulación de Trayectoria) Si debe seguir una línea curva y mantener un punto de cruce simultáneamente con la mirada, ¿qué tipo de control se exige?", 
              "opciones": {"a": "Control dual y anticipación visomotora.", "b": "Solo velocidad de reacción.", "c": "Solo precisión estática.", "d": "Control de respiración."}},
-            {"pregunta": "(Simulación de Instrumento) La acción de operar un freno de mano mientras se presiona el embrague en un vehículo requiere:", 
+            {"pregunta": "(Simulación de Instrumento) La acción de operar un freno de mano con una mano mientras se presiona el embrague con el pie requiere:", 
              "opciones": {"a": "Coordinación bimanual y bipedal asimétrica.", "b": "Coordinación solo de las manos.", "c": "Solo fuerza en las piernas.", "d": "Visión de túnel."}},
-            {"pregunta": "(Simulación de Secuencia) Una cadena de producción requiere: Agarrar (Mano Izq.), Girar (Mano Der.), Soltar (Mano Izq.). ¿Qué habilidad se mide principalmente?", 
-             "opciones": {"a": "Secuenciación y ritmo en la alternancia motora.", "b": "Velocidad perceptiva.", "c": "Precisión manual.", "d": "Fuerza de agarre."}},
+            {"pregunta": "(Simulación de Secuencia) Una cadena de producción requiere: Agarrar (Mano Izq.), Girar (Mano Der.), Soltar (Mano Izq.) en un ciclo rápido. ¿Qué habilidad se mide principalmente?", 
+             "opciones": {"a": "Secuenciación y ritmo en la alternancia motora (Independencia de miembros).", "b": "Velocidad perceptiva.", "c": "Precisión manual.", "d": "Fuerza de agarre."}},
             {"pregunta": "(Simulación de Mando) En un simulador, ¿qué movimiento de joystick compensa una desviación de trayectoria en diagonal?", 
              "opciones": {"a": "Movimiento compuesto (ejes X e Y simultáneos).", "b": "Movimiento solo en eje X.", "c": "Movimiento solo en eje Y.", "d": "Un movimiento de rotación."}},
             {"pregunta": "(Simulación de Destreza) Lanzar un objeto a un blanco en movimiento exige la coordinación de:", 
-             "opciones": {"a": "Cálculo de trayectoria, velocidad de brazo y liberación oportuna.", "b": "Solo fuerza de lanzamiento.", "c": "Solo enfoque visual.", "d": "Control de respiración."}},
+             "opciones": {"a": "Cálculo de trayectoria, velocidad de brazo y liberación oportuna (Timing dinámico).", "b": "Solo fuerza de lanzamiento.", "c": "Solo enfoque visual.", "d": "Control de respiración."}},
             {"pregunta": "(Simulación de Respuesta) El estímulo es una luz roja. La respuesta es presionar un botón con el pie. ¿Qué factor puede causar el mayor retraso en la acción?", 
              "opciones": {"a": "Tiempo de reacción psicomotora (Ojo-Pie).", "b": "La fuerza del pie.", "c": "La luminosidad de la luz.", "d": "El color del botón."}},
             {"pregunta": "(Simulación) Para martillar un clavo, se requiere la coordinación de:", 
@@ -238,42 +238,42 @@ def generate_gatb_questions():
         "Atención Concentrada": [
             {"pregunta": "¿Cuántos números '9' se pueden contar en la siguiente línea de datos, sin errores de omisión o doble conteo?: 1923945967891290", 
              "opciones": {"a": "5", "b": "4", "c": "6", "d": "3"}},
-            {"pregunta": "Encuentre el error de transcripción en la serie de códigos de barras (Busque el código diferente): A45B90-D, A45B90-D, A45B90-E, A45B90-D", 
-             "opciones": {"a": "A45B90-E", "b": "A45B90-D", "c": "A45B90-D (el primero)", "d": "No hay errores"}},
-            {"pregunta": "Si tiene una lista de 500 ítems y debe verificar que cada código empieza con 'INV-', ¿qué aptitud se mide primariamente?", 
+            {"pregunta": "Encuentre el error de transcripción en la serie de códigos de barras (Busque el código DIFERENTE a A45B90-D): A45B90-D, A45B90-D, A45B90-E, A45B90-D", 
+             "opciones": {"a": "A45B90-E", "b": "A45B90-D (el primero)", "c": "A45B90-D (el segundo)", "d": "No hay errores"}},
+            {"pregunta": "Si tiene una lista de 500 ítems y debe verificar que cada código empieza con 'INV-' durante una hora, ¿qué aptitud se mide primariamente?", 
              "opciones": {"a": "Atención sostenida y selectiva.", "b": "Velocidad perceptiva.", "c": "Razonamiento Clerical.", "d": "Memoria a corto plazo."}},
-            {"pregunta": "Al corregir un informe de 10 páginas, ¿cuál es el error más difícil de detectar si la atención decae?", 
+            {"pregunta": "Al corregir un informe de 10 páginas, ¿cuál es el error más difícil de detectar si la atención decae por fatiga?", 
              "opciones": {"a": "Errores sutiles de puntuación o concordancia.", "b": "Errores obvios de ortografía.", "c": "Errores de formato.", "d": "Errores de impresión."}},
             {"pregunta": "Localice el valor de inventario que NO coincide en las dos columnas: Columna A: [150, 200, 310, 450]; Columna B: [150, 200, 301, 450]", 
              "opciones": {"a": "310/301", "b": "150/150", "c": "200/200", "d": "450/450"}},
             {"pregunta": "En un texto, la palabra 'documentos' aparece 4 veces. Si se le pide contarlas sin marcar el texto, ¿qué proceso cognitivo está bajo prueba?", 
              "opciones": {"a": "Foco y conteo mental.", "b": "Memoria de largo plazo.", "c": "Razonamiento abstracto.", "d": "Visión periférica."}},
-            {"pregunta": "¿Cuántas letras 'S' en mayúscula se encuentran en el siguiente fragmento: 'SISTEMA de gestión de Seguridad e Higiene'?", 
-             "opciones": {"a": "3", "b": "4", "c": "2", "d": "5"}},
+            {"pregunta": "¿Cuántas letras 'A' en mayúscula se encuentran en el siguiente fragmento: 'SISTEMA de gestión de Seguridad e Higiene'?", 
+             "opciones": {"a": "1", "b": "2", "c": "3", "d": "4"}},
             {"pregunta": "Si un auditor verifica que un procedimiento de 8 pasos se haya cumplido rigurosamente, ¿qué tipo de atención se necesita en el paso 5?", 
              "opciones": {"a": "Atención focalizada y sostenida.", "b": "Atención dividida.", "c": "Distracción.", "d": "Atención pasiva."}},
-            {"pregunta": "En una matriz de 10x10 llena de letras 'X' y un único 'Y', ¿cuánto tiempo tarda en promedio una persona para localizar la 'Y'?", 
-             "opciones": {"a": "Depende de la capacidad de exploración visual (selectiva).", "b": "Menos de 1 segundo.", "c": "Más de 1 minuto.", "d": "Depende de la fuerza."}},
+            {"pregunta": "En una matriz de 10x10 llena de letras 'X' y un único 'Y', ¿qué cualidad es crítica para localizar la 'Y' rápidamente?", 
+             "opciones": {"a": "Capacidad de exploración visual (selectiva).", "b": "Menos de 1 segundo.", "c": "Más de 1 minuto.", "d": "Depende de la fuerza."}},
             {"pregunta": "Determine el único número impar en la serie: 2, 4, 6, 8, 11, 12, 14.", 
              "opciones": {"a": "11", "b": "8", "c": "2", "d": "14"}},
             {"pregunta": "La capacidad de ignorar un ruido fuerte mientras se completa una tarea de cálculo mide:", 
              "opciones": {"a": "Atención selectiva (resistencia a la distracción).", "b": "Coordinación manual.", "c": "Velocidad perceptiva.", "d": "Memoria."}},
-            {"pregunta": "¿Cuál es la hora marcada por un reloj si las manecillas están en 12 y 6, y se pide ignorar el color (Simulación)?", 
+            {"pregunta": "¿Cuál es la hora marcada por un reloj si la manecilla corta está en 12 y la larga en 6 (Ignorando AM/PM)?", 
              "opciones": {"a": "6:00 (o 18:00)", "b": "12:30", "c": "6:30", "d": "12:00"}}
         ],
         "Razonamiento Mecánico": [
             {"pregunta": "En un sistema de poleas, si se desea levantar una carga de 100 kg con una fuerza de 50 kg, ¿cuántas poleas móviles mínimas se necesitan idealmente?", 
-             "opciones": {"a": "Una polea móvil.", "b": "Dos poleas móviles.", "c": "Ninguna.", "d": "Cuatro poleas fijas."}},
-            {"pregunta": "Si se aumenta el radio de la rueda motriz (engranaje de entrada) en un sistema de engranajes, ¿cómo afecta esto la velocidad del engranaje conducido?", 
+             "opciones": {"a": "Una polea móvil (reducción 2:1).", "b": "Dos poleas móviles.", "c": "Ninguna.", "d": "Cuatro poleas fijas."}},
+            {"pregunta": "Si se aumenta el radio de la rueda motriz (engranaje de entrada) en un sistema de engranajes, ¿cómo afecta esto la velocidad angular del engranaje conducido?", 
              "opciones": {"a": "Disminuye la velocidad del engranaje conducido.", "b": "Aumenta la velocidad del engranaje conducido.", "c": "No afecta la velocidad.", "d": "Afecta solo la fuerza."}},
             {"pregunta": "¿Qué ley de la física establece que 'la energía no se crea ni se destruye, solo se transforma'?", 
              "opciones": {"a": "Principio de conservación de la energía.", "b": "Primera Ley de Newton.", "c": "Ley de Ohm.", "d": "Principio de Arquímedes."}},
-            {"pregunta": "¿Qué clase de palanca es una carretilla, donde la carga (resistencia) está entre el punto de apoyo y la fuerza aplicada (esfuerzo)?", 
+            {"pregunta": "¿Qué clase de palanca es una carretilla, donde la carga (resistencia) está entre el punto de apoyo (fulcro) y la fuerza aplicada (esfuerzo)?", 
              "opciones": {"a": "Palanca de Segundo Grado.", "b": "Palanca de Primer Grado.", "c": "Palanca de Tercer Grado.", "d": "Cuarta clase."}},
             {"pregunta": "En un circuito hidráulico, ¿qué componente es responsable de convertir la energía de presión del fluido en movimiento mecánico lineal?", 
              "opciones": {"a": "Cilindro hidráulico (actuador).", "b": "Bomba.", "c": "Válvula de control.", "d": "Reservorio."}},
-            {"pregunta": "Si un resorte se estira el doble de su longitud inicial (dentro del límite elástico), ¿cómo varía la fuerza requerida?", 
-             "opciones": {"a": "Se duplica la fuerza (Ley de Hooke).", "b": "Se cuadruplica la fuerza.", "c": "Se reduce a la mitad.", "d": "Permanece constante."}},
+            {"pregunta": "Si un resorte se estira el doble de su longitud inicial (dentro del límite elástico), ¿cómo varía la fuerza requerida (Ley de Hooke)?", 
+             "opciones": {"a": "Se duplica la fuerza.", "b": "Se cuadruplica la fuerza.", "c": "Se reduce a la mitad.", "d": "Permanece constante."}},
             {"pregunta": "¿Cuál es la función principal de un condensador en un circuito eléctrico de corriente continua (DC)?", 
              "opciones": {"a": "Almacenar energía eléctrica temporalmente.", "b": "Regular el flujo de corriente.", "c": "Convertir AC a DC.", "d": "Actuar como interruptor."}},
             {"pregunta": "Para apretar un tornillo con mayor torque (fuerza de giro), ¿qué se debe hacer con la llave o herramienta?", 
@@ -288,45 +288,45 @@ def generate_gatb_questions():
              "opciones": {"a": "El circuito se abre y la corriente se detiene por completo.", "b": "La corriente aumenta.", "c": "La corriente solo disminuye ligeramente.", "d": "La corriente se mantiene igual."}}
         ],
         "Razonamiento Abstracto": [
-            {"pregunta": "Identifique la figura que completa la matriz 3x3, aplicando la regla de que la tercera columna es la inversión de la primera (Simulación gráfica).", 
+            {"pregunta": "Identifique la figura que completa la matriz 3x3, aplicando la regla de que la tercera columna es la inversión horizontal de la primera.", 
              "opciones": {"a": "La figura reflejada del patrón opuesto.", "b": "La misma figura que el centro.", "c": "Un cuadrado vacío.", "d": "Un círculo sombreado."}},
             {"pregunta": "Encuentre el patrón de la secuencia figurativa: Triángulo (negro), Cuadrado (blanco), Pentágono (negro), Hexágono (blanco), ...", 
              "opciones": {"a": "Heptágono (negro).", "b": "Octágono (blanco).", "c": "Círculo (negro).", "d": "Rombo (blanco)."}},
-            {"pregunta": "La figura A se transforma en B por **Rotación** y **Cambio de color**. ¿Qué transformación aplica B para convertirse en C (Simulación)?", 
-             "opciones": {"a": "Reflexión vertical y adición de un elemento.", "b": "Solo cambio de posición.", "c": "Rotación de 180°.", "d": "Eliminación del color."}},
-            {"pregunta": "Si el símbolo [A] significa 'SUMAR' y el símbolo [B] significa 'INVERTIR', ¿cuál es el resultado de [A] (X, Y) y luego [B] (Resultado)?", 
-             "opciones": {"a": "La suma de X e Y, luego reflejada.", "b": "Solo la suma de X e Y.", "c": "La inversión de X e Y.", "d": "El producto de X e Y."}},
+            {"pregunta": "La Figura A se transforma en B por Rotación de 45° y Cambio de color. ¿Qué transformación aplica B para convertirse en C (Simulación de transformación simple)?", 
+             "opciones": {"a": "Reflexión vertical y cambio de color a la inversa.", "b": "Solo cambio de posición.", "c": "Rotación de 180°.", "d": "Eliminación del color."}},
+            {"pregunta": "Si el símbolo [A] significa 'SUMAR' y el símbolo [B] significa 'INVERTIR EL RESULTADO', ¿cuál es el resultado de aplicar [A] (X, Y) y luego [B] (Resultado)?", 
+             "opciones": {"a": "La suma de X e Y, luego reflejada u ordenada a la inversa.", "b": "Solo la suma de X e Y.", "c": "La inversión de X e Y.", "d": "El producto de X e Y."}},
             {"pregunta": "Elija la figura que NO pertenece al grupo, pues es la única que tiene un número impar de lados y está sombreada.", 
              "opciones": {"a": "Figura 1 (un pentágono sombreado).", "b": "Figura 2 (un cuadrado vacío).", "c": "Figura 3 (un círculo sombreado).", "d": "Figura 4 (un hexágono vacío)."}},
             {"pregunta": "El conjunto de figuras de la izquierda obedece a la regla 'Tiene líneas rectas'. ¿Cuál de las figuras de la derecha pertenece al conjunto?", 
              "opciones": {"a": "Una figura con solo líneas rectas.", "b": "Una figura con líneas curvas.", "c": "Un círculo.", "d": "Un óvalo."}},
-            {"pregunta": "Si un patrón de puntos se mueve una posición hacia la derecha y se añade un nuevo punto. ¿Cuál es el patrón que sigue (Simulación)?", 
-             "opciones": {"a": "El patrón con un punto adicional desplazado.", "b": "El patrón original sin cambios.", "c": "El patrón con un punto eliminado.", "d": "El patrón movido hacia arriba."}},
-            {"pregunta": "La figura final es la intersección de dos figuras iniciales. ¿Cuál es la figura que se obtuvo (Simulación)?", 
-             "opciones": {"a": "La figura que corresponde al área común.", "b": "La figura que corresponde a la suma de áreas.", "c": "La figura inicial más grande.", "d": "La figura inicial más pequeña."}},
-            {"pregunta": "En la secuencia ▵, ▿, ▹, ◃, ¿cuál es el movimiento de transformación que se aplica en cada paso?", 
+            {"pregunta": "Si un patrón de puntos se mueve una posición hacia la derecha y se añade un nuevo punto en la izquierda. ¿Cuál es el patrón que sigue?", 
+             "opciones": {"a": "El patrón con un punto adicional desplazado y un nuevo punto en la izquierda.", "b": "El patrón original sin cambios.", "c": "El patrón con un punto eliminado.", "d": "El patrón movido hacia arriba."}},
+            {"pregunta": "La figura final es la intersección de dos figuras iniciales. ¿Cuál es la figura que se obtuvo (Simulación de superposición)?", 
+             "opciones": {"a": "La figura que corresponde al área común (intersección).", "b": "La figura que corresponde a la suma de áreas.", "c": "La figura inicial más grande.", "d": "La figura inicial más pequeña."}},
+            {"pregunta": "En la secuencia ▵, ▹, ▿, ◃, ¿cuál es el movimiento de transformación que se aplica en cada paso?", 
              "opciones": {"a": "Rotación de 90° en sentido horario.", "b": "Reflexión vertical.", "c": "Rotación de 45°.", "d": "Inversión."}},
-            {"pregunta": "Complete la relación: Círculo (pequeño) es a Círculo (grande), como Cuadrado (rayado) es a:", 
+            {"pregunta": "Complete la relación: Círculo (pequeño) es a Círculo (grande) [Cambio de tamaño], como Cuadrado (rayado) es a:", 
              "opciones": {"a": "Cuadrado (rayado, grande).", "b": "Cuadrado (vacío, grande).", "c": "Círculo (rayado, grande).", "d": "Rectángulo (rayado)."}},
-            {"pregunta": "Si el color representa la magnitud y la forma el tipo. Un Círculo Azul es a un Cuadrado Rojo, como un Triángulo Grande es a:", 
-             "opciones": {"a": "Un Círculo Pequeño.", "b": "Un Cuadrado Azul.", "c": "Un Triángulo Rojo.", "d": "Un Pentágono Grande."}},
-            {"pregunta": "¿Qué figura completa la serie lógica: El primer elemento más el segundo dan el tercero (Simulación)?", 
+            {"pregunta": "Complete la analogía figurativa: El par (**Figura 1** $\\rightarrow$ **Figura 2**) es una Rotación de 90° Horaria. Si la **Figura 3** es un cuadrado con un punto en la esquina superior izquierda, ¿cuál es la **Figura 4** (simetría)?", 
+             "opciones": {"a": "Un cuadrado con el punto en la esquina superior derecha.", "b": "Un cuadrado con el punto en la esquina inferior izquierda.", "c": "Un cuadrado sin el punto.", "d": "Un círculo con el punto."}},
+            {"pregunta": "Complete la serie lógica: El primer elemento más el segundo dan el tercero. ¿Cuál es el cuarto elemento si los tres primeros cumplen esta regla de adición lógica?", 
              "opciones": {"a": "La figura resultante de la combinación de reglas.", "b": "La figura idéntica al segundo elemento.", "c": "La figura idéntica al primer elemento.", "d": "Una figura nueva sin patrón."}}
         ],
         "Razonamiento Clerical": [
-            {"pregunta": "¿Cuál es el orden alfabético-numérico correcto para archivar los siguientes códigos?: INV-2024-A, INV-2023-B, INV-2024-C, INV-2023-A.", 
+            {"pregunta": "¿Cuál es el orden alfabético-numérico correcto para archivar los siguientes códigos?: **INV-2024-A, INV-2023-B, INV-2024-C, INV-2023-A**.", 
              "opciones": {"a": "INV-2023-A, INV-2023-B, INV-2024-A, INV-2024-C", "b": "INV-2024-A, INV-2024-C, INV-2023-A, INV-2023-B", "c": "INV-2023-B, INV-2023-A, INV-2024-C, INV-2024-A", "d": "INV-2024-C, INV-2024-A, INV-2023-B, INV-2023-A"}},
-            {"pregunta": "Identifique el error de transcripción en la siguiente lista de nombres y números de identificación:", 
-             "opciones": {"a": "Juan Pérez | 56-432-198-7", "b": "Juan Pérez | 56-432-189-7", "c": "Juan Pérez | 56-432-198-7", "d": "Juan Pérez | 56-432-198-7"}},
+            {"pregunta": "Identifique el código IDÉNTICO a **56-432-198-7** en la siguiente lista de verificación, sin errores de tipografía o espaciado:", 
+             "opciones": {"a": "56-432-198-7", "b": "56-432-189-7", "c": "56-432-197-8", "d": "56-432-1987"}},
             {"pregunta": "Si se utiliza el sistema de archivo LIFO (Last In, First Out), ¿cuál de los siguientes documentos debe retirarse primero?", 
              "opciones": {"a": "Documento con la última fecha de ingreso.", "b": "Documento con la primera fecha de ingreso.", "c": "El documento más importante.", "d": "El documento con menos páginas."}},
-            {"pregunta": "¿Cuál es la fecha que NO corresponde al formato DÍA/MES/AÑO (DD/MM/AAAA) en la siguiente lista?: 15/01/2024, 31/04/2023, 01/12/2025.", 
+            {"pregunta": "En una lista de fechas, ¿cuál es la única que NO corresponde al formato DÍA/MES/AÑO (DD/MM/AAAA) o es inválida?: 15/01/2024, 31/04/2023, 01/12/2025.", 
              "opciones": {"a": "31/04/2023 (Abril solo tiene 30 días).", "b": "15/01/2024", "c": "01/12/2025", "d": "Todas son correctas."}},
             {"pregunta": "En un registro contable, ¿cuál es el campo más importante para asegurar la trazabilidad del movimiento de fondos?", 
              "opciones": {"a": "El número de asiento y la fecha.", "b": "El nombre del cliente.", "c": "El tipo de cambio.", "d": "La descripción breve."}},
-            {"pregunta": "Determine cuántos errores de puntuación (puntos y comas faltantes) hay en la siguiente frase: 'El informe esta listo pero falta la firma del director'", 
-             "opciones": {"a": "2 (falta coma y punto final)", "b": "1 (falta solo el punto final)", "c": "3 (falta coma, punto y dos puntos)", "d": "0"}},
-            {"pregunta": "Si un archivo debe ser indexado por nombre, luego por fecha y finalmente por departamento, ¿cuál es el criterio de tercer nivel?", 
+            {"pregunta": "Determine cuántos errores de puntuación y tildes hay en la siguiente frase: 'El informe esta listo pero falta la firma del director'", 
+             "opciones": {"a": "2 (le faltan la coma, el punto final y la tilde en 'está')", "b": "1 (falta solo el punto final)", "c": "3 (falta coma, punto y dos puntos)", "d": "0"}},
+            {"pregunta": "Si un archivo debe ser indexado por nombre (1er nivel), luego por fecha (2do nivel) y finalmente por departamento (3er nivel), ¿cuál es el criterio de tercer nivel?", 
              "opciones": {"a": "Departamento.", "b": "Nombre.", "c": "Fecha.", "d": "Tipo de documento."}},
             {"pregunta": "En una hoja de cálculo, ¿cuál de estas celdas no está en el rango A1:C5?", 
              "opciones": {"a": "D2", "b": "B3", "c": "A5", "d": "C1"}},
@@ -334,7 +334,7 @@ def generate_gatb_questions():
              "opciones": {"a": "65 unidades restantes.", "b": "75 unidades restantes.", "c": "85 unidades faltantes.", "d": "55 unidades restantes."}},
             {"pregunta": "¿Cuál es el código que se repite en la lista: S789-A, S789-B, S798-A, S789-A?", 
              "opciones": {"a": "S789-A", "b": "S789-B", "c": "S798-A", "d": "Todos son únicos."}},
-            {"pregunta": "La habilidad para organizar información de manera secuencial y lógica se relaciona directamente con:", 
+            {"pregunta": "La habilidad para organizar información alfanumérica de manera secuencial y lógica se relaciona directamente con:", 
              "opciones": {"a": "Razonamiento Clerical.", "b": "Razonamiento Abstracto.", "c": "Coordinación Manual.", "d": "Precisión Manual."}},
             {"pregunta": "¿Qué nombre debe ir al principio de una lista alfabética?: Pérez, Castro, Díaz, Alonso.", 
              "opciones": {"a": "Alonso", "b": "Castro", "c": "Díaz", "d": "Pérez"}}
@@ -376,7 +376,6 @@ def generate_gatb_questions():
         for i in range(N_PREGUNTAS_POR_AREA):
             q_data = detailed_questions[area_name][i]
             
-            # Usamos las opciones profesionales, pero forzamos 'a' como la correcta para la simulación
             q_opciones = q_data["opciones"]
             expected_answer = "a" 
             
@@ -547,25 +546,6 @@ def create_radar_chart(df):
     )
     return fig
 
-def create_bar_chart(df):
-    """Crea un gráfico de barras horizontal comparativo con Plotly."""
-    fig = px.bar(
-        df.sort_values(by='Percentil', ascending=True),
-        y='Área',
-        x='Percentil',
-        orientation='h',
-        color='Clasificación',
-        color_discrete_map={
-            "Superior (90-99)": "#008000", "Alto (80-89)": "#4682b4", "Promedio Alto (60-79)": "#ff8c00",
-            "Promedio (40-59)": "#ffd700", "Promedio Bajo (20-39)": "#ffa07a", "Bajo (10-19)": "#dc143c",
-            "Muy Bajo (0-9)": "#8b0000"
-        },
-        title='Comparativa Detallada de Percentiles'
-    )
-    fig.add_vline(x=50, line_width=2, line_dash="dash", line_color="gray", annotation_text="Promedio (50%)")
-    fig.update_layout(xaxis_title="Puntuación Percentil", yaxis_title="Área Aptitudinal", legend_title="Clasificación", height=700)
-    return fig
-
 # --- 4. FUNCIONES DE REPORTE PROFESIONAL (ANÁLISIS) ---
 
 def get_analisis_detalle(df_resultados):
@@ -617,7 +597,7 @@ def get_analisis_detalle(df_resultados):
         }
         improvement_focus = desc_map_improvement.get(row['Área'], "la mejora de habilidades básicas.")
         mejoras_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Esta área requiere enfoque. El entrenamiento debe priorizar **{improvement_focus}**.</li>"
-    mejoras_text += "</ul>"
+    mejoras_text += f"</ul>"
 
     # Potencial Ocupacional (Basado en el perfil simulado)
     top_area = top_3.iloc[0]['Área']
@@ -638,41 +618,6 @@ def get_analisis_detalle(df_resultados):
         "perfil": perfil,
         "top_area": top_area
     }
-
-
-def get_graficos_interpretacion(df_resultados):
-    """Genera un resumen detallado de la interpretación de los gráficos."""
-    avg_percentil = df_resultados['Percentil'].mean()
-    max_percentil = df_resultados['Percentil'].max()
-    min_percentil = df_resultados['Percentil'].min()
-    area_max = df_resultados.loc[df_resultados['Percentil'].idxmax()]['Área']
-    area_min = df_resultados.loc[df_resultados['Percentil'].idxmin()]['Área']
-    
-    n_superior = df_resultados[df_resultados['Percentil'] >= 80].shape[0]
-    n_bajo = df_resultados[df_resultados['Percentil'] <= 40].shape[0]
-    
-    interpretacion = f"""
-    <div style="background-color: #f7f9fb; padding: 20px; border-radius: 10px; border-left: 5px solid #007ACC; margin-top: 20px;">
-        <h4 style="color: #007ACC; margin-top: 0;">Interpretación Detallada del Perfil Aptitudinal</h4>
-        
-        <p>El perfil aptitudinal, reflejado en el **Gráfico de Radar**, muestra una forma **{'equilibrada' if abs(max_percentil - min_percentil) < 40 else 'puntiaguda y desequilibrada'}**. Esto indica que el evaluado tiene una distribución de habilidades {'relativamente homogénea.' if abs(max_percentil - min_percentil) < 40 else 'con marcados picos y valles.'}</p>
-
-        <h5 style="color: #1f77b4;">Análisis de Fortalezas (Percentiles Altos)</h5>
-        <ul>
-            <li>**Aptitud Máxima:** **{area_max}** ({max_percentil:.1f}%) es el punto más fuerte. Esta habilidad debe ser el foco de la elección de carrera o el rol principal en el trabajo.</li>
-            <li>**Puntajes Superiores:** Se identifican **{n_superior}** áreas (Percentil ≥ 80) que superan significativamente a la población de referencia, indicando un potencial avanzado en estas funciones.</li>
-        </ul>
-        
-        <h5 style="color: #d62728;">Análisis de Áreas de Desarrollo (Percentiles Bajos)</h5>
-        <ul>
-            <li>**Aptitud Mínima:** **{area_min}** ({min_percentil:.1f}%) representa el área con mayor necesidad de entrenamiento.</li>
-            <li>**Puntajes Bajos:** Se identifican **{n_bajo}** áreas (Percentil ≤ 40) que están por debajo del promedio. Mejorar estas áreas es crucial para roles que exijan un perfil aptitudinal holístico.</li>
-        </ul>
-        
-        <p style="font-style: italic; margin-bottom: 0;">**Conclusión:** La mayoría de las habilidades se concentran alrededor del promedio de **{avg_percentil:.1f}%**, pero la distinción entre **{area_max}** y **{area_min}** determina el tipo de rol más adecuado.</p>
-    </div>
-    """
-    return interpretacion
 
 def get_estrategias_de_mejora(area):
     """Proporciona estrategias de mejora específicas para cada área aptitudinal."""
@@ -733,7 +678,7 @@ def vista_inicio():
     with col_info:
         st.subheader("📊 Metodología de Evaluación")
         st.info(f"""
-        Esta prueba simula una evaluación aptitudinal de alto nivel, midiendo su potencial en **12 áreas cognitivas y motrices** fundamentales para el éxito profesional. Las preguntas han sido redactadas para ser profesionales y originales (sin violación de derechos de autor).
+        Esta prueba simula una evaluación aptitudinal de alto nivel, midiendo su potencial en **12 áreas cognitivas y motrices** fundamentales para el éxito profesional. Las preguntas han sido redactadas para ser profesionales y originales.
         
         **🎯 Estructura del Test:**
         - **Total de Aptitudes Evaluadas:** **{len(AREAS)}**
@@ -868,7 +813,7 @@ def vista_resultados():
         st.markdown(f"""
         <div style="background-color: {color_calificacion}; padding: 25px; border-radius: 15px; color: white; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
             <h2 style="margin: 0; font-size: 2.2em; font-weight: 800; letter-spacing: 1px;">{calificacion}</h2>
-            <p style="margin: 5px 0 10px 0; font-size: 1.2em; font-weight: 500;">Percentil Promedio Global: **{avg_percentil:.1f}%**</p>
+            <p style="margin: 5px 0 0 0; font-size: 1.2em; font-weight: 500;">Percentil Promedio Global: **{avg_percentil:.1f}%**</p>
             <p style="font-size: 1.0em; margin: 0; border-top: 1px solid rgba(255,255,255,0.4); padding-top: 8px; opacity: 0.9;">**Diagnóstico:** {detalle_calificacion}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -909,22 +854,12 @@ def vista_resultados():
             
     st.markdown("---")
 
-    # --- 3. VISUALIZACIÓN PROFESIONAL + INTERPRETACIÓN ---
+    # --- 3. VISUALIZACIÓN PROFESIONAL ---
     with st.container(border=True):
-        st.subheader("3. Perfil Aptitudinal Visual y Análisis de Patrones")
+        st.subheader("3. Perfil Aptitudinal Visual")
         
-        col_radar, col_bar = st.columns(2)
-
-        with col_radar:
-            st.markdown("#### Gráfico de Radar: Distribución de Percentiles")
-            st.plotly_chart(create_radar_chart(df_resultados), use_container_width=True)
-
-        with col_bar:
-            st.markdown("#### Comparativa Detallada de Percentiles")
-            st.plotly_chart(create_bar_chart(df_resultados), use_container_width=True)
-
-        # Resumen Detallado de Interpretación
-        st.markdown(get_graficos_interpretacion(df_resultados), unsafe_allow_html=True)
+        st.markdown("#### Gráfico de Radar: Distribución de Percentiles")
+        st.plotly_chart(create_radar_chart(df_resultados), use_container_width=True)
 
     st.markdown("---")
 
