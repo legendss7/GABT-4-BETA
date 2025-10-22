@@ -81,7 +81,7 @@ def set_stage(new_stage):
 def siguiente_area():
     """Avanza a la siguiente área del test."""
     if st.session_state.area_actual_index < len(AREAS) - 1:
-        st.session_state.area_actual_index += 1
+        st.session_session.area_actual_index += 1
     else:
         # Si es la última área, pasa a resultados
         calcular_resultados()
@@ -158,58 +158,58 @@ def vista_test_activo():
     # Filtrar las preguntas para el área actual
     preguntas_area = df_preguntas[df_preguntas['area'] == area_actual]
 
-    # Usamos un form para asegurar que las respuestas se mantengan entre cambios de página
-    with st.form(key=f'form_{area_actual}'):
-        for index, row in preguntas_area.iterrows():
-            pregunta_id = row['id']
-            
-            # Crear la lista de opciones para el radio
-            opciones_radio = [f"{k}) {v}" for k, v in row['opciones'].items()]
-            
-            # Recuperar la respuesta anterior si existe
-            default_value = st.session_state.respuestas.get(pregunta_id)
-            
-            # Determinar el índice de la respuesta guardada
-            try:
-                # Buscamos la clave (a, b, c, d) de la respuesta guardada
-                default_index = list(row['opciones'].keys()).index(default_value)
-            except (ValueError, AttributeError):
-                default_index = -1 # No seleccionada o respuesta inválida
-
-            st.markdown(f"**{row['id']}. {row['pregunta']}**")
-            
-            # Callback para guardar la respuesta inmediatamente al seleccionar
-            def on_radio_change(q_id, opciones):
-                selected_option_full = st.session_state[f'q_{q_id}']
-                # Extraer solo la clave (a, b, c, d)
-                selected_key = selected_option_full.split(')')[0]
-                st.session_state.respuestas[q_id] = selected_key
-            
-            # Si no hay respuesta anterior, el índice es None para que no seleccione nada
-            index_to_use = default_index if default_index != -1 else None
-
-            st.radio(
-                "Selecciona tu respuesta:", 
-                opciones_radio, 
-                key=f'q_{pregunta_id}', 
-                index=index_to_use,
-                on_change=on_radio_change,
-                args=(pregunta_id, row['opciones'])
-            )
-            st.markdown("---")
+    # Se ha eliminado el wrapper st.form para evitar el error de callback.
+    # Las respuestas se guardan en el estado (st.session_state) inmediatamente usando on_change.
+    for index, row in preguntas_area.iterrows():
+        pregunta_id = row['id']
         
-        # Botón para pasar a la siguiente sección / finalizar
-        if st.session_state.area_actual_index < len(AREAS) - 1:
-            next_area_name = AREAS[st.session_state.area_actual_index + 1].split('(')[0].strip()
-            submit_label = f"Continuar a {next_area_name}"
-            callback_func = siguiente_area
-        else:
-            submit_label = "Finalizar Test y Ver Resultados"
-            callback_func = siguiente_area
+        # Crear la lista de opciones para el radio
+        opciones_radio = [f"{k}) {v}" for k, v in row['opciones'].items()]
+        
+        # Recuperar la respuesta anterior si existe
+        default_value = st.session_state.respuestas.get(pregunta_id)
+        
+        # Determinar el índice de la respuesta guardada
+        try:
+            # Buscamos la clave (a, b, c, d) de la respuesta guardada
+            default_index = list(row['opciones'].keys()).index(default_value)
+        except (ValueError, AttributeError):
+            default_index = -1 # No seleccionada o respuesta inválida
 
-        if st.form_submit_button(submit_label, type="primary"):
-             # La lógica de cambio de estado se maneja en el callback
-             pass 
+        st.markdown(f"**{row['id']}. {row['pregunta']}**")
+        
+        # Callback para guardar la respuesta inmediatamente al seleccionar
+        def on_radio_change(q_id, opciones):
+            selected_option_full = st.session_state[f'q_{q_id}']
+            # Extraer solo la clave (a, b, c, d)
+            selected_key = selected_option_full.split(')')[0]
+            st.session_state.respuestas[q_id] = selected_key
+        
+        # Si no hay respuesta anterior, el índice es None para que no seleccione nada
+        index_to_use = default_index if default_index != -1 else None
+
+        st.radio(
+            "Selecciona tu respuesta:", 
+            opciones_radio, 
+            key=f'q_{pregunta_id}', 
+            index=index_to_use,
+            on_change=on_radio_change,
+            args=(pregunta_id, row['opciones'])
+        )
+        st.markdown("---")
+    
+    # Botón para pasar a la siguiente sección / finalizar
+    if st.session_state.area_actual_index < len(AREAS) - 1:
+        next_area_name = AREAS[st.session_state.area_actual_index + 1].split('(')[0].strip()
+        submit_label = f"Continuar a {next_area_name}"
+        callback_func = siguiente_area
+    else:
+        submit_label = "Finalizar Test y Ver Resultados"
+        callback_func = siguiente_area
+
+    # Usamos st.button con on_click para avanzar la navegación
+    st.button(submit_label, type="primary", on_click=callback_func)
+
 
 def vista_resultados():
     """Muestra la tabla de resultados y la clasificación."""
@@ -241,17 +241,17 @@ def vista_resultados():
 
     if st.button("Volver al Inicio", type="secondary"):
         st.session_state.respuestas = {}
-        st.session_state.area_actual_index = 0
+        st.session_session.area_actual_index = 0
         set_stage('inicio')
 
 
 # --- 5. CONTROL DEL FLUJO PRINCIPAL ---
 
-if st.session_state.stage == 'inicio':
+if st.session_session.stage == 'inicio':
     vista_inicio()
-elif st.session_state.stage == 'test_activo':
+elif st.session_session.stage == 'test_activo':
     vista_test_activo()
-elif st.session_state.stage == 'resultados':
+elif st.session_session.stage == 'resultados':
     vista_resultados()
 
 # --- 6. FOOTER ---
