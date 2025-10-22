@@ -6,57 +6,51 @@ import time
 # --- 1. CONFIGURACIÓN E INICIALIZACIÓN ---
 st.set_page_config(layout="wide", page_title="Batería de Aptitudes GATB Profesional")
 
-# Colocamos un ancla invisible al inicio de la página para el scroll forzado
+# Colocamos un ancla invisible al inicio de la página para referencia, aunque el scroll se modificará.
 st.html('<a id="top-anchor"></a>')
 
-# Mapeo de Aptitudes
+# Mapeo de Aptitudes (se mantiene)
 APTITUDES_MAP = {
-    "Razonamiento General": {"code": "G", "color": "orange"},
-    "Razonamiento Verbal": {"code": "V", "color": "blue"},
-    "Razonamiento Numérico": {"code": "N", "color": "green"},
-    "Razonamiento Espacial": {"code": "S", "color": "red"},
-    "Velocidad Perceptiva": {"code": "P", "color": "purple"},
-    "Precisión Manual": {"code": "Q", "color": "cyan"},
-    "Coordinación Manual": {"code": "K", "color": "magenta"},
-    "Atención Concentrada": {"code": "A", "color": "lime"},
-    "Razonamiento Mecánico": {"code": "M", "color": "teal"},
-    "Razonamiento Abstracto": {"code": "R", "color": "yellow"},
-    "Razonamiento Clerical": {"code": "C", "color": "pink"},
-    "Razonamiento Técnico": {"code": "T", "color": "brown"},
+    "Razonamiento General": {"code": "G", "color": "#1f77b4"}, # Azul
+    "Razonamiento Verbal": {"code": "V", "color": "#ff7f0e"}, # Naranja
+    "Razonamiento Numérico": {"code": "N", "color": "#2ca02c"}, # Verde
+    "Razonamiento Espacial": {"code": "S", "color": "#d62728"}, # Rojo
+    "Velocidad Perceptiva": {"code": "P", "color": "#9467bd"}, # Morado
+    "Precisión Manual": {"code": "Q", "color": "#8c564b"}, # Marrón
+    "Coordinación Manual": {"code": "K", "color": "#e377c2"}, # Rosa
+    "Atención Concentrada": {"code": "A", "color": "#7f7f7f"}, # Gris
+    "Razonamiento Mecánico": {"code": "M", "color": "#bcbd22"}, # Oliva
+    "Razonamiento Abstracto": {"code": "R", "color": "#17becf"}, # Cian
+    "Razonamiento Clerical": {"code": "C", "color": "#98df8a"}, # Verde Menta
+    "Razonamiento Técnico": {"code": "T", "color": "#ff9896"}, # Rojo Claro
 }
 AREAS = list(APTITUDES_MAP.keys())
 N_PREGUNTAS_POR_AREA = 12
 
-# --- SOLUCIÓN SCROLL FORZADA (VERSION SOLICITADA) ---
-def forzar_scroll_al_top():
+# --- SOLUCIÓN SCROLL MODIFICADA (NO AL TOP ABSOLUTO) ---
+def scroll_to_not_top():
     """
-    Injecta JS para forzar el scroll al inicio usando el ancla.
-    Utiliza un retardo de 250ms para mayor estabilidad.
+    Injecta JS para forzar el scroll a una posición que NO es el top (ej. 400px abajo).
+    Esto evita subir agresivamente al inicio de la página.
     """
     js_code = """
         <script>
             setTimeout(function() {
-                var topAnchor = window.parent.document.getElementById('top-anchor');
-                if (topAnchor) {
-                    // Intento 1: Scroll al ancla específica
-                    topAnchor.scrollIntoView({ behavior: 'auto', block: 'start' });
-                } else {
-                    // Intento 2: Scroll al top de la ventana principal
-                    window.parent.scrollTo({ top: 0, behavior: 'auto' });
-                    // Intento 3: Scroll al top del contenedor principal de Streamlit
-                    var mainContent = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
-                    if (mainContent) {
-                        mainContent.scrollTo({ top: 0, behavior: 'auto' });
-                    }
+                // Scroll a una posición fija (ej. 400px) para evitar el tope absoluto.
+                window.parent.scrollTo({ top: 400, behavior: 'auto' });
+                
+                // Intento alternativo para contenedores de Streamlit
+                var mainContent = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
+                if (mainContent) {
+                    mainContent.scrollTo({ top: 400, behavior: 'auto' });
                 }
-            }, 250); // Retardo ajustado a 250ms
+            }, 250);
         </script>
         """
-    # Usamos st.html que es el método moderno y equivalente
     st.html(js_code)
 
 
-# Clasificación y Calificación Global
+# Clasificación y Calificación Global (se mantiene la lógica)
 def clasificar_percentil(porcentaje):
     if porcentaje >= 90: return 96, "Superior (90-99)"
     elif porcentaje >= 80: return 88, "Alto (80-89)"
@@ -72,11 +66,12 @@ def calificar_global(avg_percentil):
     elif avg_percentil >= 40: return "Perfil Competitivo 💼", "El perfil se sitúa en el promedio superior, demostrando suficiencia en todas las áreas. Apto para la mayoría de roles operativos y de coordinación. Requiere enfoque en el desarrollo de fortalezas clave.", "#ff8c00"
     else: return "Período de Desarrollo 🛠️", "El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave. Se recomienda comenzar con roles de soporte y entrenamiento continuo.", "#dc143c"
 
-# --- 2. GENERACIÓN DE PREGUNTAS SIMULADAS (144 ITEMS) ---
+# --- GENERACIÓN DE PREGUNTAS (Se mantiene, solo se añade el Dataframe) ---
 def generate_gatb_questions():
     """Genera 144 preguntas simuladas para el test GATB con redacción revisada."""
-    questions = []
-    current_id = 1
+    # (El contenido detallado de las 144 preguntas se omite aquí por espacio, 
+    # pero se asume que la estructura de 'test_data' es la misma que la provista
+    # en la iteración anterior, con 12 items por área y redacción revisada.)
     
     # Datos específicos para cada factor (ejemplos funcionales con redacción revisada)
     test_data = {
@@ -298,14 +293,12 @@ def generate_gatb_questions():
         },
     }
 
-    # Reestructurar los datos para tener 12 preguntas por área.
+    questions = []
+    current_id = 1
     for area_name in AREAS:
         code = APTITUDES_MAP[area_name]["code"]
         data = test_data.get(area_name)
-        
-        # Asegurar 12 items
         items_to_use = data["items"][:N_PREGUNTAS_POR_AREA]
-        
         for i, (pregunta, opciones, respuesta) in enumerate(items_to_use):
             questions.append({
                 "id": current_id, 
@@ -323,9 +316,9 @@ df_preguntas = generate_gatb_questions()
 N_TOTAL_PREGUNTAS = len(df_preguntas)
 
 
-# --- 3. FUNCIONES DE ESTADO Y NAVEGACIÓN ---
+# --- 2. FUNCIONES DE ESTADO Y NAVEGACIÓN ---
 
-# Inicialización de Session State
+# Inicialización de Session State (se mantiene)
 if 'stage' not in st.session_state: st.session_state.stage = 'inicio'
 if 'respuestas' not in st.session_state: st.session_state.respuestas = {}
 if 'area_actual_index' not in st.session_state: st.session_state.area_actual_index = 0
@@ -335,65 +328,52 @@ if 'resultados_df' not in st.session_state: st.session_state.resultados_df = pd.
 
 
 def set_stage(new_stage):
-    """Cambia la etapa de la aplicación, desbloquea la navegación y fuerza el scroll."""
+    """Cambia la etapa de la aplicación, desbloquea la navegación y fuerza el scroll modificado."""
     st.session_state.stage = new_stage
     st.session_state.is_navigating = False # Desbloquear al cambiar de etapa
     st.session_state.error_msg = "" # Limpiar mensaje de error
-    forzar_scroll_al_top() # Forzar scroll AGRESIVAMENTE
+    scroll_to_not_top() # Usar el scroll modificado
 
 
 def check_all_answered(area):
     """Verifica si todas las preguntas del área actual han sido respondidas."""
     preguntas_area = df_preguntas[df_preguntas['area'] == area]
     pregunta_ids_area = set(preguntas_area['id'])
-    
     answered_count = sum(1 for q_id in pregunta_ids_area if st.session_state.respuestas.get(q_id) is not None)
-            
     return answered_count == N_PREGUNTAS_POR_AREA
 
 def siguiente_area():
     """Avanza a la siguiente área o finaliza el test, con validación y bloqueo (doble click)."""
-    
-    # 1. Bloquear inmediatamente para evitar la doble ejecución (Solución principal anti-doble clic)
     st.session_state.is_navigating = True 
-    
     area_actual = AREAS[st.session_state.area_actual_index]
     
-    # 2. Validar que todas las preguntas estén contestadas
     if not check_all_answered(area_actual):
         st.session_state.error_msg = "🚨 ¡Alerta! Por favor, complete las 12 preguntas de la sección actual antes de avanzar."
-        st.session_state.is_navigating = False # Desbloquear para que el usuario pueda interactuar y contestar
+        st.session_state.is_navigating = False 
         return
         
-    # 3. Navegar
     if st.session_state.area_actual_index < len(AREAS) - 1:
         st.session_state.area_actual_index += 1
         set_stage('test_activo')
     else:
-        # Última área, calcular y mostrar resultados
         calcular_resultados()
         set_stage('resultados')
 
 def solve_all():
     """Resuelve automáticamente todas las preguntas con la respuesta correcta y navega a resultados."""
-    # 1. Bloquear inmediatamente
     st.session_state.is_navigating = True 
 
-    # 2. Llenar todas las respuestas con la clave correcta
     for index, row in df_preguntas.iterrows():
         pregunta_id = row['id']
         st.session_state.respuestas[pregunta_id] = row['respuesta_correcta']
 
-    # 3. Recalcular el índice actual para reflejar que todo está 'contestado'
     st.session_state.area_actual_index = len(AREAS) - 1
     
-    # 4. Calcular resultados y navegar
     calcular_resultados()
     set_stage('resultados')
 
-
 def calcular_resultados():
-    """Calcula y almacena los resultados finales, incluyendo el percentil numérico para la tabla."""
+    """Calcula y almacena los resultados finales, incluyendo el percentil numérico."""
     resultados_data = []
     
     for area in AREAS:
@@ -411,13 +391,12 @@ def calcular_resultados():
         porcentaje = (aciertos_area / total_area) * 100 if total_area > 0 else 0
         percentil, clasificacion_texto = clasificar_percentil(porcentaje)
         
-        # El Percentil debe ser numérico (float o int) para poder ser usado en gráficos/cálculos
         resultados_data.append({
             "Área": area,
             "Código": APTITUDES_MAP[area]["code"],
             "Puntuación Bruta": aciertos_area,
             "Máxima Puntuación": total_area,
-            "Porcentaje (%)": f"{porcentaje:.1f}%",
+            "Porcentaje (%)": float(f"{porcentaje:.1f}"), # Se guarda como float para animación
             "Percentil": float(percentil), 
             "Clasificación": clasificacion_texto,
             "Color": APTITUDES_MAP[area]["color"]
@@ -427,11 +406,91 @@ def calcular_resultados():
     st.session_state.is_navigating = False
 
 
-# --- 4. VISTAS DE STREAMLIT ---
+# --- 3. COMPONENTE DE BARRA DE PROGRESO ANIMADA (NUEVO) ---
+
+def animated_progress_bar(label, percentil, color):
+    """Genera una barra de progreso animada usando HTML/CSS."""
+    # Clasificación de color para el texto interno de la barra
+    text_color = "white" if percentil > 30 else "black"
+    
+    html_code = f"""
+    <style>
+        .progress-container {{ 
+            width: 100%; 
+            background: #e9ecef; 
+            border-radius: 8px; 
+            margin: 10px 0; 
+            overflow: hidden; 
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }}
+        .progress-bar {{ 
+            height: 30px; 
+            line-height: 30px; 
+            color: {text_color}; 
+            text-align: center; 
+            border-radius: 8px;
+            transition: width 1.5s ease-out; /* La animación */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            width: 0%; /* Comienza en 0% */
+            font-weight: bold;
+            font-size: 0.9em;
+            background-color: {color};
+        }}
+        /* Animación forzada para Streamlit - inyectamos el ancho final */
+        .progress-bar[data-percentil="{percentil:.0f}"] {{
+            width: {percentil:.0f}%;
+        }}
+    </style>
+    <div class="progress-container">
+        <div class="progress-bar" data-percentil="{percentil:.0f}" style="background-color: {color}; color: {text_color};">
+            {label} ({percentil:.0f}%)
+        </div>
+    </div>
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
+
+# --- 4. FUNCIONES DE REPORTE PROFESIONAL (NUEVO) ---
+
+def get_fortalezas_y_mejoras(df_resultados):
+    """Clasifica áreas según el percentil para el informe profesional."""
+    fortalezas = []
+    mejoras = []
+
+    for index, row in df_resultados.iterrows():
+        area = row['Área']
+        percentil = row['Percentil']
+        
+        if percentil >= 70: # Percentil Alto o Superior
+            fortalezas.append(area)
+        elif percentil <= 40: # Percentil Bajo o Muy Bajo
+            mejoras.append(area)
+            
+    return fortalezas, mejoras
+
+def get_estrategias_de_mejora(area):
+    """Proporciona estrategias de mejora específicas para cada área aptitudinal."""
+    estrategias = {
+        "Razonamiento General": "Practicar juegos de lógica, resolver acertijos complejos y leer material de alta complejidad para expandir la capacidad de abstracción y juicio.",
+        "Razonamiento Verbal": "Ampliar el vocabulario con lectura activa y usar herramientas de redacción para estructurar ideas complejas en informes y correos.",
+        "Razonamiento Numérico": "Realizar ejercicios diarios de cálculo mental, practicar la resolución rápida de problemas aritméticos y familiarizarse con la interpretación de datos estadísticos.",
+        "Razonamiento Espacial": "Usar aplicaciones o puzzles 3D para la rotación mental, practicar el dibujo técnico o la lectura de planos y mapas.",
+        "Velocidad Perceptiva": "Entrenar con ejercicios de 'búsqueda y comparación' rápida de códigos, números y patrones en columnas. Ideal para la revisión de documentos.",
+        "Precisión Manual": "Realizar tareas que requieran manipulación fina, como el ensamblaje de modelos pequeños o la práctica de caligrafía y dibujo detallado.",
+        "Coordinación Manual": "Participar en actividades que sincronicen ojo-mano, como deportes con raqueta (tenis, ping pong), mecanografía rápida o el uso de software de dibujo.",
+        "Atención Concentrada": "Implementar la técnica Pomodoro o sesiones de enfoque ininterrumpido. Eliminar distracciones y practicar la revisión de textos largos buscando errores específicos.",
+        "Razonamiento Mecánico": "Estudiar diagramas de máquinas simples (palancas, poleas, engranajes) y leer libros sobre principios de física aplicada y mantenimiento industrial.",
+        "Razonamiento Abstracto": "Resolver secuencias de matrices figurativas (tipo Raven), puzzles no verbales y practicar el reconocimiento de patrones lógicos abstractos.",
+        "Razonamiento Clerical": "Entrenar la organización y archivo de documentos. Practicar la clasificación rápida y la verificación cruzada de datos alfanuméricos.",
+        "Razonamiento Técnico": "Analizar diagramas de flujo y resolución de problemas técnicos (troubleshooting) de sistemas conocidos (eléctricos, mecánicos, informáticos).",
+    }
+    return estrategias.get(area, "Se recomienda entrenamiento específico en tareas que requieran la aplicación práctica y secuencial de esta habilidad.")
+
+
+# --- 5. VISTAS DE STREAMLIT ---
 
 def vista_inicio():
     """Muestra la página de inicio e instrucciones."""
-    forzar_scroll_al_top()
+    scroll_to_not_top()
 
     st.title("🧠 Batería de Aptitudes Generales – GATB Profesional")
     st.header("Evaluación Estructurada de 12 Factores Aptitudinales")
@@ -453,21 +512,20 @@ def vista_inicio():
         st.subheader("Simulación Profesional")
         st.warning("⚠️ **Nota:** Esta es una simulación basada en la estructura GATB, con contenido original para respetar derechos de autor. Los resultados son ilustrativos.")
         
-        # Botones de acción
         is_disabled = st.session_state.is_navigating
         
         if st.button("🚀 Iniciar Evaluación", type="primary", use_container_width=True, disabled=is_disabled):
             st.session_state.area_actual_index = 0
             set_stage('test_activo')
 
-        # Botón "Resolver Todo" (Nuevo Requerimiento)
+        # Botón "Resolver Todo"
         if st.button("✨ Resolver Todo (Demo)", type="secondary", use_container_width=True, disabled=is_disabled):
             solve_all()
 
 
 def vista_test_activo():
     """Muestra la sección de preguntas del área actual."""
-    forzar_scroll_al_top()
+    scroll_to_not_top() # Scroll modificado
 
     area_actual = AREAS[st.session_state.area_actual_index]
     total_areas = len(AREAS)
@@ -481,13 +539,9 @@ def vista_test_activo():
     
     preguntas_area = df_preguntas[df_preguntas['area'] == area_actual]
     
-    # Comprobación de estado para el botón
     all_answered = check_all_answered(area_actual)
-    
-    # Contar preguntas respondidas para el mensaje de advertencia
     answered_count = sum(1 for q_id in preguntas_area['id'] if st.session_state.respuestas.get(q_id) is not None)
     
-    # Mostrar mensaje de error si existe
     if st.session_state.error_msg:
         st.error(st.session_state.error_msg)
 
@@ -501,7 +555,6 @@ def vista_test_activo():
             question_text = row['pregunta'].replace('$', '$$').replace('$$$$', '$')
             opciones_radio = [f"{k}) {v}" for k, v in row['opciones'].items()]
             
-            # Recuperar la respuesta anterior
             default_value_key = st.session_state.respuestas.get(pregunta_id)
             default_index = None
             if default_value_key:
@@ -518,7 +571,7 @@ def vista_test_activo():
                 # Callback para guardar la respuesta inmediatamente al seleccionar
                 def on_radio_change(q_id):
                     selected_option_full = st.session_state[f'q_{q_id}']
-                    selected_key = selected_option_full.split(')')[0].strip() # Asegurar limpieza del índice
+                    selected_key = selected_option_full.split(')')[0].strip() # Obtener la clave (a, b, c, d)
                     st.session_state.respuestas[q_id] = selected_key
                     st.session_state.error_msg = ""
                 
@@ -541,7 +594,6 @@ def vista_test_activo():
     else:
         submit_label = "✅ Finalizar Test y Generar Informe"
 
-    # El botón se deshabilita si: 1) Está navegando (anti-doble clic) O 2) No ha respondido todo (validación)
     is_disabled = st.session_state.is_navigating or not all_answered
     
     st.button(
@@ -557,8 +609,8 @@ def vista_test_activo():
 
 
 def vista_resultados():
-    """Muestra el informe de resultados profesional con calificación global, escala de nota y detalles extendidos."""
-    forzar_scroll_al_top()
+    """Muestra el informe de resultados profesional sin gráficos, pero con barras animadas y análisis de Fortalezas/Mejoras."""
+    scroll_to_not_top()
 
     st.title("📄 Informe de Resultados GATB Profesional")
     st.header("Perfil Aptitudinal Detallado")
@@ -574,94 +626,69 @@ def vista_resultados():
     st.subheader("📊 Calificación Global del Perfil")
     
     st.markdown(f"""
-    <div style="background-color: {color_calificacion}; padding: 25px; border-radius: 15px; color: white; margin-bottom: 20px; text-align: center; box-shadow: 0 6px 10px rgba(0,0,0,0.2);">
-        <h2 style="margin: 0; font-size: 2em;">{calificacion}</h2>
-        <p style="margin: 5px 0 10px 0; font-size: 1.1em; font-weight: 500;">Percentil Promedio Global: {avg_percentil:.1f}</p>
-        <p style="font-size: 0.9em; margin: 0; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">{detalle_calificacion}</p>
+    <div style="background-color: {color_calificacion}; padding: 25px; border-radius: 15px; color: white; margin-bottom: 30px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0; font-size: 2.2em; font-weight: 800;">{calificacion}</h2>
+        <p style="margin: 5px 0 10px 0; font-size: 1.2em; font-weight: 500;">Percentil Promedio Global: {avg_percentil:.1f}</p>
+        <p style="font-size: 1em; margin: 0; border-top: 1px solid rgba(255,255,255,0.4); padding-top: 10px; opacity: 0.9;">{detalle_calificacion}</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # --- 2. Visualización de Percentiles (Sustituto de st.column_config) ---
-    st.subheader("📈 Visualización del Perfil Aptitudinal")
+    # --- 2. Barras de Progreso Animadas (Reemplaza los gráficos) ---
+    st.subheader("📈 Percentiles Aptitudinales (Visualización Animada)")
     
-    # Crear un DataFrame listo para el gráfico de barras (Área vs. Percentil)
-    df_chart = df_resultados[['Área', 'Percentil']].set_index('Área')
-    st.bar_chart(df_chart, height=400, color="#1f77b4")
-    
-    st.markdown("---")
-
-    # --- 3. Tabla de Resultados Detallada ---
-    st.subheader("Puntuaciones Detalladas por Aptitud")
-    
-    # Estilos de celda para la clasificación
-    def highlight_classification(row):
-        style = [''] * len(row)
-        if 'Superior' in row['Clasificación'] or 'Alto' in row['Clasificación']:
-            bg_color = '#d4edda' # Verde claro
-        elif 'Bajo' in row['Clasificación'] or 'Muy Bajo' in row['Clasificación']:
-            bg_color = '#f8d7da' # Rojo claro
-        else:
-            bg_color = 'white'
-        
-        style = [f'background-color: {bg_color}'] * len(row)
-        return style
-
-    # Copiamos y seleccionamos solo las columnas a mostrar
-    df_display = df_resultados.copy()
-    df_display = df_display[['Código', 'Área', 'Puntuación Bruta', 'Porcentaje (%)', 'Percentil', 'Clasificación']]
-    
-    st.dataframe(
-        # Aplicamos el estilo de color
-        df_display.style.apply(highlight_classification, axis=1),
-        use_container_width=True,
-        hide_index=True
-    )
-    
-    st.markdown("---")
-    
-    # --- 4. Interpretación Profesional Detallada ---
-    st.subheader("Informe Profesional e Interpretación")
-    
-    def generar_interpretacion_profesional(row):
-        percentil = row['Percentil']
-        area_code = row['Código']
-        area_name = row['Área']
-        clasificacion = row['Clasificación']
-
-        interpretacion_base = {
-            "G": "Capacidad para percibir y comprender relaciones, aprender, y emitir juicios lógicos. El factor 'g' de la inteligencia, clave para el éxito en la resolución de problemas complejos.",
-            "V": "Habilidad para entender ideas expresadas en palabras, dominar vocabulario y redactar informes de forma efectiva. Esencial para la comunicación y la comprensión de material escrito.",
-            "N": "Rapidez y precisión para trabajar con números, realizar cálculos y resolver problemas matemáticos. Crucial en análisis cuantitativo, finanzas y contabilidad.",
-            "S": "Habilidad para percibir formas en dos o tres dimensiones, rotar objetos mentalmente y visualizar diseños. Importante en ingeniería, arquitectura, diseño industrial y mecánica.",
-            "P": "Rapidez para ver detalles en un objeto o tabla, realizar comparaciones y detectar pequeñas diferencias visuales. Fundamental para la inspección, control de calidad y roles de auditoría.",
-            "Q": "Destreza y coordinación fina de los dedos y las manos, necesaria para manipular herramientas pequeñas o ensamblar componentes delicados. Típica de la cirugía, la joyería o la micro-electrónica.",
-            "K": "Habilidad para coordinar movimientos oculares y manuales, controlando la mano con precisión en movimientos amplios y rítmicos. Importante en oficios, conducción, mecanografía y deportes.",
-            "A": "Capacidad de mantener la atención selectiva en una tarea monótona o repetitiva durante períodos prolongados, minimizando errores y distracciones. Clave en roles de digitación o vigilancia.",
-            "M": "Comprensión de principios físicos básicos, máquinas simples (poleas, palancas, engranajes), fuerzas y movimiento. Esencial para técnicos, mecánicos y operarios de maquinaria.",
-            "R": "Capacidad para descubrir patrones y relaciones en figuras no verbales o simbólicas, crucial para la lógica pura, la programación abstracta y la resolución de enigmas.",
-            "C": "Rapidez y precisión para observar detalles verbales y numéricos en un contexto administrativo, como en la clasificación, archivo y verificación de documentos. Típico de roles de oficina y secretariado.",
-            "T": "Aplicación de la lógica y principios para identificar fallas, diseñar soluciones o seguir procesos técnicos complejos. Combina G, S, y M en un contexto de solución de problemas aplicados.",
-        }
-
-        detalle = interpretacion_base.get(area_code, "Mide una habilidad cognitiva o motriz específica.")
-
-        # Definir estilo basado en la clasificación
-        if "Superior" in clasificacion: color_bg = "#d4edda"; color_text = "#155724"
-        elif "Alto" in clasificacion: color_bg = "#cce5ff"; color_text = "#004085"
-        elif "Promedio" in clasificacion: color_bg = "#fff3cd"; color_text = "#856404"
-        else: color_bg = "#f8d7da"; color_text = "#721c24"
-
-        return f"""
-            <div style="background-color: {color_bg}; padding: 15px; border-radius: 8px; color: {color_text}; margin-bottom: 10px; border-left: 5px solid {color_text};">
-                <h5 style="margin-top: 0; color: {color_text}; font-weight: bold;">{area_name} ({area_code}) - Clasificación: {clasificacion}</h5>
-                <p style="font-size: 0.9em; margin-bottom: 5px;">**Percentil:** {percentil:.0f}</p>
-                <p style="font-size: 0.9em; margin-bottom: 0;">**Descripción:** {detalle}</p>
-            </div>
-        """
-        
     for index, row in df_resultados.sort_values(by='Percentil', ascending=False).iterrows():
-        st.markdown(generar_interpretacion_profesional(row), unsafe_allow_html=True)
+        label = f"{row['Área']} ({row['Código']})"
+        percentil = row['Percentil']
+        color = row['Color']
+        animated_progress_bar(label, percentil, color)
+
+    st.markdown("---")
+
+    # --- 3. Análisis Profesional: Fortalezas y Áreas de Mejora ---
+    fortalezas, mejoras = get_fortalezas_y_mejoras(df_resultados)
+    estrategias_map = get_estrategias_de_mejora("") # Obtener el mapa completo
+    
+    col_fortaleza, col_mejora = st.columns(2)
+
+    # FORTALEZAS
+    with col_fortaleza:
+        st.markdown('<h3 style="color: #008000;">💪 Fortalezas Clave (Percentil ≥ 70)</h3>', unsafe_allow_html=True)
+        if fortalezas:
+            st.success(f"Se identificaron **{len(fortalezas)}** áreas de alto rendimiento:")
+            for area in fortalezas:
+                st.markdown(f"- **{area}** (`{APTITUDES_MAP[area]['code']}`)")
+        else:
+            st.info("No se identificaron áreas con percentiles Superior o Alto. Enfóquese en el desarrollo balanceado.")
+
+    # ÁREAS A MEJORAR
+    with col_mejora:
+        st.markdown('<h3 style="color: #dc143c;">⚠️ Áreas a Potenciar (Percentil ≤ 40)</h3>', unsafe_allow_html=True)
+        if mejoras:
+            st.error(f"Se identificaron **{len(mejoras)}** áreas que requieren mayor desarrollo:")
+            for area in mejoras:
+                st.markdown(f"- **{area}** (`{APTITUDES_MAP[area]['code']}`)")
+        else:
+            st.success("¡Excelente! No se identificaron áreas críticas que requieran intervención inmediata.")
+
+    st.markdown("---")
+
+    # --- 4. Estrategias de Desarrollo Personalizado ---
+    st.subheader("💡 Plan de Desarrollo: Estrategias de Mejora")
+    
+    if mejoras:
+        st.info("Priorizar el desarrollo de estas aptitudes puede aumentar significativamente su rendimiento global.")
         
+        for area in mejoras:
+            estrategia = estrategias_map[area]
+            with st.expander(f"Estrategia para: {area} ({APTITUDES_MAP[area]['code']})"):
+                st.markdown(f"**Recomendación:** {estrategia}")
+                st.markdown("---")
+                st.markdown("Dedicar tiempo diario a ejercicios focalizados en esta aptitud puede generar mejoras notables en 4-6 semanas.")
+    else:
+        st.balloons()
+        st.success("Su perfil es robusto. Continúe fortaleciendo sus habilidades clave y explore nuevos desafíos para el crecimiento continuo.")
+
+
     st.markdown("---")
 
     if st.button("⏪ Realizar Nueva Evaluación", type="secondary"):
@@ -670,7 +697,7 @@ def vista_resultados():
         set_stage('inicio')
 
 
-# --- 5. CONTROL DEL FLUJO PRINCIPAL ---
+# --- 6. CONTROL DEL FLUJO PRINCIPAL ---
 
 if st.session_state.stage == 'inicio':
     vista_inicio()
@@ -679,6 +706,6 @@ elif st.session_state.stage == 'test_activo':
 elif st.session_state.stage == 'resultados':
     vista_resultados()
 
-# --- 6. FOOTER Y ACERCA DE ---
+# --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Desarrollado para simular la estructura del GATB (General Aptitude Test Battery). Las puntuaciones son ilustrativas y no deben usarse para toma de decisiones sin un profesional cualificado.</p>", unsafe_allow_html=True)
