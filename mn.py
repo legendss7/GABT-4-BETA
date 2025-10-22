@@ -81,7 +81,8 @@ def set_stage(new_stage):
 def siguiente_area():
     """Avanza a la siguiente área del test."""
     if st.session_state.area_actual_index < len(AREAS) - 1:
-        st.session_session.area_actual_index += 1
+        # Corregido: Usar st.session_state
+        st.session_state.area_actual_index += 1
     else:
         # Si es la última área, pasa a resultados
         calcular_resultados()
@@ -241,17 +242,21 @@ def vista_resultados():
 
     if st.button("Volver al Inicio", type="secondary"):
         st.session_state.respuestas = {}
-        st.session_session.area_actual_index = 0
+        # Corregido: Usar st.session_state
+        st.session_state.area_actual_index = 0
         set_stage('inicio')
 
 
 # --- 5. CONTROL DEL FLUJO PRINCIPAL ---
 
-if st.session_session.stage == 'inicio':
+# Corregido: Usar st.session_state
+if st.session_state.stage == 'inicio':
     vista_inicio()
-elif st.session_session.stage == 'test_activo':
+# Corregido: Usar st.session_state
+elif st.session_state.stage == 'test_activo':
     vista_test_activo()
-elif st.session_session.stage == 'resultados':
+# Corregido: Usar st.session_state
+elif st.session_state.stage == 'resultados':
     vista_resultados()
 
 # --- 6. FOOTER ---
