@@ -863,10 +863,11 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES ---
+    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES (MODIFICADO A GRILLA) ---
     with st.container(border=True):
         st.subheader("4. Análisis Comparativo del Perfil")
         
+        # Se crean dos columnas para simular la grilla
         col_fortaleza, col_mejora = st.columns(2)
 
         with col_fortaleza:
