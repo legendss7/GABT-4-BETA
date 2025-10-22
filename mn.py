@@ -851,73 +851,9 @@ def vista_test_activo():
     
     if not all_answered:
         st.warning(f"Faltan **{N_PREGUNTAS_POR_AREA - answered_count}** preguntas por responder en esta sección.")
-# --- INICIO MODIFICACIÓN: LÓGICA DE ROLES DINÁMICOS ---
 
-def get_rol_potencial(percentiles):
-    """Determina los roles aptos y no aptos basados en el perfil de aptitudes."""
-    
-    # 1. Calcular el promedio de percentiles por clúster de aptitudes GABT
-    
-    # Razonamiento/Intelectual (I)
-    cluster_I = (percentiles.get("Razonamiento General", 0) + percentiles.get("Razonamiento Verbal", 0) + percentiles.get("Razonamiento Numérico", 0) + percentiles.get("Razonamiento Abstracto", 0)) / 4
-    # Perceptivo/Clerical (C)
-    cluster_C = (percentiles.get("Velocidad Perceptiva", 0) + percentiles.get("Atención Concentrada", 0) + percentiles.get("Razonamiento Clerical", 0)) / 3
-    # Técnico/Mecánico/Espacial (M)
-    cluster_M = (percentiles.get("Razonamiento Espacial", 0) + percentiles.get("Razonamiento Mecánico", 0) + percentiles.get("Razonamiento Técnico", 0)) / 3
-    # Motor/Manual (F)
-    cluster_F = (percentiles.get("Precisión Manual", 0) + percentiles.get("Coordinación Manual", 0)) / 2
-
-    # Definición de umbrales para la toma de decisiones
-    UMBRAL_ALTO = 75
-    UMBRAL_BAJO = 35
-
-    roles_aptos = set()
-    roles_no_aptos = set()
-    
-    # Lógica de Roles Aptos basada en fortalezas (Alto o Superior)
-    if cluster_I >= UMBRAL_ALTO:
-        roles_aptos.add("Liderazgo Estratégico, Consultoría, Analista Senior, roles que exigen Visión de Negocio y Abstracción de Problemas.")
-    
-    if cluster_C >= UMBRAL_ALTO:
-        roles_aptos.add("Roles Administrativos, de Control de Calidad, Logística, Soporte al Cliente, Auditoría, Contabilidad, Facturación.")
-    
-    if cluster_M >= UMBRAL_ALTO:
-        roles_aptos.add("Ingeniería (Diseño, Planta), Mantenimiento Técnico, Operaciones de Manufactura, Arquitectura, Posiciones de Mando y Control Industrial.")
-
-    if cluster_F >= UMBRAL_ALTO:
-        roles_aptos.add("Operaciones de Detalle Fino, Ensamblaje de Precisión, Laboratorio Clínico, Producción de Artesanía, Mecánica de Alta Precisión, Tareas manuales especializadas.")
-
-    # Lógica de Roles NO Aptos basada en debilidades (Bajo o Muy Bajo)
-    if cluster_I < UMBRAL_BAJO:
-        roles_no_aptos.add("Roles Estratégicos o de Dirección que requieren una alta capacidad de análisis y toma de decisiones complejas (ej. CEO, CFO, Director de Estrategia).")
-    
-    if cluster_C < UMBRAL_BAJO:
-        roles_no_aptos.add("Cargos de Ingreso o Control de Datos Masivos, Tareas Administrativas o de Vigilancia Repetitiva (por falta de constancia/velocidad perceptiva y clerical).")
-    
-    if cluster_M < UMBRAL_BAJO:
-        roles_no_aptos.add("Posiciones de Ingeniería de Diseño, Mantenimiento Técnico o Especialista en Planos (por dificultad para visualizar y resolver problemas técnicos/espaciales).")
-        
-    if cluster_F < UMBRAL_BAJO:
-        roles_no_aptos.add("Operaciones de Ensamblaje, Manipulación de Instrumentos Finos o Trabajo de Laboratorio de Precisión (por falta de precisión o coordinación motora fina).")
-        
-    # Asignación de Roles Generales si no hay fortalezas claras
-    if not roles_aptos:
-        roles_aptos.add("Roles de Soporte Básico y Entrenamiento Continuo, con enfoque en las áreas de desarrollo prioritarias.")
-    
-    # Formateo del resultado
-    return {
-        "aptos": " | ".join(sorted(list(roles_aptos))),
-        "no_aptos": " | ".join(sorted(list(roles_no_aptos)))
-    }
-
-# --- FIN MODIFICACIÓN: LÓGICA DE ROLES DINÁMICOS ---
 
 def vista_resultados():
-    def vista_resultados():
-    percentiles = st.session_state.percentiles  # <-- ¡Esta línea es clave!
-    
-    st.title("Reporte de Aptitudes GABT Pro Max 📊")
-    # ... el resto del código ...
     """Muestra el informe de resultados profesional, detallado, con gráficos y estructurado."""
 
     df_resultados = st.session_state.resultados_df
@@ -1013,45 +949,33 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # --- 5. Potencial de Rol y Plan de Desarrollo ---
-    st.header("5. Potencial de Rol y Plan de Desarrollo 💡") # 
+    # --- 5. PLAN DE DESARROLLO ---
+    with st.container(border=True):
+        st.subheader("5. Potencial de Rol y Plan de Desarrollo")
+        
+        st.markdown(f"""
+        <div style="padding: 15px; border: 1px solid #003366; background-color: #f0f8ff; border-radius: 10px; margin-bottom: 20px;">
+            <h5 style="margin-top: 0; color: #003366;">Potencial Ocupacional Recomendado (Enfoque Primario)</h5>
+            <p style="font-size: 1.1em; font-weight: bold;">{analisis['potencial']}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # 5.1 Potencial Ocupacional (Usa la nueva lógica dinámica)
-    # Se llama a la función get_rol_potencial, que analiza los clusters de percentiles.
-    potencial = get_rol_potencial(percentiles) # 
+        st.markdown("#### **Estrategias Individualizadas de Desarrollo**")
+        st.info("Plan de acción basado en las aptitudes con percentiles bajos (≤ 40%) o aquellas que requieran mejora continua.")
+        
+        bottom_areas = df_resultados[df_resultados['Percentil'] <= 40]['Área'].tolist()
+        
+        if bottom_areas:
+            for area in bottom_areas:
+                estrategia = get_estrategias_de_mejora(area)
+                with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True):
+                    st.markdown(f"**Nivel de Prioridad:** **ALTA**")
+                    st.markdown(f"**Plan de Acción Sugerido:** {estrategia}")
+        else:
+            st.balloons()
+            st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.")
 
-    st.subheader("5.1 Potencial Ocupacional Recomendado (Enfoque Primario) 🎯") # 
-    st.success(f"**Cargos Recomendados:** {potencial['aptos']}") # 
 
-    # 5.2 Roles No Aptos (Muestra los roles desaconsejados por debilidad de clusters)
-    st.subheader("5.2 Roles para los cuales NO es Apto o se requiere MÁS Desarrollo 🛑") # 
-    if potencial['no_aptos']: # 
-        st.error(f"**Cargos NO Recomendados o de Alto Riesgo:** {potencial['no_aptos']}") # 
-    else:
-        st.success("El perfil muestra una alta versatilidad. No hay cargos principales para los cuales NO sea apto, pero se recomienda enfoque en las áreas de desarrollo listadas.") # 
-    
-    st.markdown("---") # 
-
-    # 5.3 Plan de Desarrollo (Estrategias)
-    st.subheader("5.3 Plan de Desarrollo Individual (Estrategias de Refuerzo)") # 
-
-    # Reutilizamos el DataFrame para encontrar las áreas de desarrollo
-    # Nota: Es importante que df_comparativo se haya creado antes de este punto.
-    # Si no tienes df_comparativo, puedes usar el diccionario 'desarrollo' definido en el punto 3.2
-    
-    # Asumo que la variable `desarrollo` fue definida previamente en la sección 3.2:
-    desarrollo = {area: percentil for area, percentil in percentiles.items() if percentil < 40}
-
-    if desarrollo:
-        for area, percentil in sorted(desarrollo.items(), key=lambda item: item[1]): # 
-            estrategia = get_estrategias_de_mejora(area)
-            with st.expander(f"📚 Estrategia para desarrollar **{area}** (`{APTITUDES_MAP[area]['code']}`)", expanded=True): # 
-                st.markdown(f"**Nivel de Prioridad:** **ALTA**") # 
-                st.markdown(f"**Percentil:** {percentil}")
-                st.markdown(f"**Plan de Acción Sugerido:** {estrategia}") # 
-    else:
-        st.balloons() # 
-        st.success("Su perfil es excepcional y equilibrado. El plan de acción es mantener las fortalezas y buscar la maestría profesional.") #
     st.markdown("---")
 
     # Botón de reinicio que asegura el borrado de respuestas y el scroll al top
@@ -1075,6 +999,3 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
-
-
-
