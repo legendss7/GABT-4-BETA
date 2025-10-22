@@ -42,15 +42,22 @@ return 88, "Alto (80-89)"
 
 def calificar_global(avg_percentil):
     """Genera la calificación ejecutiva basada en el promedio global de percentiles."""
-    if avg_percentil >= 85: return "Potencial Ejecutivo 🌟", "El perfil indica un potencial excepcionalmente alto y equilibrado para roles directivos, estratégicos y de 
-alta complejidad. Capacidad de aprendizaje superior y adaptación rápida a cualquier entorno.", "#008000"
-    elif avg_percentil >= 65: return "Nivel Profesional Avanzado 🏆", "El perfil es sólido, con fortalezas claras y un buen balance aptitudinal.
-Excelente para roles técnicos especializados, de gestión de proyectos y consultoría.", "#4682b4"
-    elif avg_percentil >= 40: return "Perfil Competitivo 💼", "El perfil se sitúa en el promedio superior, demostrando suficiencia en todas las áreas.
+    if avg_percentil >= 85: 
+        return "Potencial Ejecutivo 🌟", """El perfil indica un potencial excepcionalmente alto y equilibrado para roles directivos, estratégicos y de 
+alta complejidad. Capacidad de aprendizaje superior y adaptación rápida a cualquier entorno.""", "#008000"
+    
+    elif avg_percentil >= 65: 
+        return "Nivel Profesional Avanzado 🏆", """El perfil es sólido, con fortalezas claras y un buen balance aptitudinal.
+Excelente para roles técnicos especializados, de gestión de proyectos y consultoría.""", "#4682b4"
+        
+    elif avg_percentil >= 40: 
+        return "Perfil Competitivo 💼", """El perfil se sitúa en el promedio superior, demostrando suficiencia en todas las áreas.
 Apto para la mayoría de roles operativos y de coordinación.
-Requiere enfoque en el desarrollo de fortalezas clave.", "#ff8c00"
-    else: return "Período de Desarrollo 🛠️", "El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave.
-Se recomienda comenzar con roles de soporte y entrenamiento continuo.", "#dc143c"
+Requiere enfoque en el desarrollo de fortalezas clave.""", "#ff8c00"
+        
+    else: 
+        return "Período de Desarrollo 🛠️", """El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave.
+Se recomienda comenzar con roles de soporte
 
 def generate_gatb_questions():
     """Genera 144 preguntas simuladas (basadas en 12 plantillas únicas) con respuestas esperadas."""
@@ -721,3 +728,4 @@ Estilo y Paleta:
 -   Alta fidelidad, mockup de UI/UX, fotorrealista.
 """
 # --- FIN DE CORRECCIÓN 3 ---
+
