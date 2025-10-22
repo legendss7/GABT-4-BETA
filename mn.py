@@ -913,6 +913,11 @@ def get_rol_potencial(percentiles):
 # --- FIN MODIFICACIÓN: LÓGICA DE ROLES DINÁMICOS ---
 
 def vista_resultados():
+    def vista_resultados():
+    percentiles = st.session_state.percentiles  # <-- ¡Esta línea es clave!
+    
+    st.title("Reporte de Aptitudes GABT Pro Max 📊")
+    # ... el resto del código ...
     """Muestra el informe de resultados profesional, detallado, con gráficos y estructurado."""
 
     df_resultados = st.session_state.resultados_df
@@ -1070,5 +1075,6 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
+
 
 
