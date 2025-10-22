@@ -45,6 +45,8 @@ def calificar_global(avg_percentil):
     elif avg_percentil >= 40: return "Perfil Competitivo 💼", "El perfil se sitúa en el promedio superior, demostrando suficiencia en todas las áreas. Apto para la mayoría de roles operativos y de coordinación. Requiere enfoque en el desarrollo de fortalezas clave.", "#ff8c00"
     else: return "Período de Desarrollo 🛠️", "El perfil requiere un período de enfoque intensivo en el desarrollo de aptitudes clave. Se recomienda comenzar con roles de soporte y entrenamiento continuo.", "#dc143c"
 
+# --- FUNCIÓN CON LAS 144 PREGUNTAS Y RESPUESTAS (REINSERCIÓN COMPLETA) ---
+
 def generate_gatb_questions():
     """Genera 144 preguntas simuladas con respuestas esperadas para el cálculo.
        Se han codificado preguntas y respuestas para cada una de las 12 áreas."""
@@ -84,7 +86,7 @@ def generate_gatb_questions():
             ("Un tren recorre 120 km en 2 horas. ¿Cuál es su velocidad promedio en km/h?", {"a": "50", "b": "60", "c": "70", "d": "80"}, "b"),
             ("Resuelve: 3 * (5 + 2) - 10", {"a": "15", "b": "11", "c": "14", "d": "21"}, "b"),
             ("Si la razón de niños a niñas en una clase es 3:2 y hay 15 niños, ¿cuántos alumnos hay en total?", {"a": "20", "b": "25", "c": "30", "d": "18"}, "b"),
-            ("¿Cuál es el valor de X si 2X + 5 = 17?", {"a": "6", "b": "7", "c": "11", "d": "8"}, "a"),
+            ("¿Cuál es el valor de X si $2X + 5 = 17$?", {"a": "6", "b": "7", "c": "11", "d": "8"}, "a"),
             ("La suma de los ángulos internos de un triángulo es:", {"a": "90°", "b": "180°", "c": "360°", "d": "270°"}, "b"),
             ("Si $100 se incrementa en un 10% y luego se reduce en un 10%, ¿cuál es el resultado?", {"a": "$100", "b": "$99", "c": "$98", "d": "$101"}, "b"),
             ("¿Cuántos metros son 3.5 kilómetros?", {"a": "350", "b": "3500", "c": "35000", "d": "35"}, "b"),
@@ -573,11 +575,18 @@ def vista_test_activo():
             if default_value_key:
                 full_option_text = f"{default_value_key}) {row['opciones'][default_value_key]}"
                 try:
+                    # Esto asegura que el radio se marque correctamente incluso si el texto completo no está
+                    # estrictamente disponible en el estado. Se usa el mapeo del diccionario.
                     default_index = opciones_radio.index(full_option_text)
-                except:
-                  
-                    default_index = None
-
+                except ValueError:
+                    # En caso de error, intentamos encontrar la clave de la respuesta en las opciones
+                    for i, opt in enumerate(opciones_radio):
+                        if opt.startswith(f"{default_value_key})"):
+                            default_index = i
+                            break
+                    if default_index is None:
+                       default_index = None # Si no se encuentra, se queda sin selección
+            
             with st.container(border=True):
                 st.markdown(f"**Pregunta {q_num}.**") 
                 st.markdown(question_text) 
