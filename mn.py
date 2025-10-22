@@ -998,4 +998,5 @@ if st.session_state.should_scroll:
 
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
-st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Test creado por José Ignacio Taj-Taj.</p>", unsafe_allow_html=True)
+
