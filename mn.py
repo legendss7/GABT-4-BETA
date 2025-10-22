@@ -3,6 +3,11 @@ import pandas as pd
 import numpy as np
 import time
 
+# 3. EJECUCIÓN CONDICIONAL DEL SCROLL
+if st.session_state.should_scroll:
+    forzar_scroll_al_top(idx)
+    st.session_state.should_scroll = False
+
 # --- 1. CONFIGURACIÓN E INICIALIZACIÓN ---
 st.set_page_config(layout="wide", page_title="Batería de Aptitudes GATB Profesional")
 
@@ -27,29 +32,7 @@ APTITUDES_MAP = {
 AREAS = list(APTITUDES_MAP.keys())
 N_PREGUNTAS_POR_AREA = 12
 
-# Función MAXIMAMENTE FORZADA para el scroll al top (Ajustado el delay para más estabilidad)
-def forzar_scroll_al_top():
-    """Injecta JS para forzar el scroll al inicio usando el ancla y múltiples selectores."""
-    js_code = """
-        <script>
-            setTimeout(function() {
-                var topAnchor = window.parent.document.getElementById('top-anchor');
-                if (topAnchor) {
-                    // Intento 1: Scroll al ancla específica
-                    topAnchor.scrollIntoView({ behavior: 'auto', block: 'start' });
-                } else {
-                    // Intento 2: Scroll al top de la ventana principal
-                    window.parent.scrollTo({ top: 0, behavior: 'auto' });
-                    // Intento 3: Scroll al top del contenedor principal de Streamlit
-                    var mainContent = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
-                    if (mainContent) {
-                        mainContent.scrollTo({ top: 0, behavior: 'auto' });
-                    }
-                }
-            }, 100); // Pequeño aumento en el delay (de 50 a 100ms) para mayor estabilidad
-        </script>
-        """
-    st.html(js_code)
+
 
 
 # Clasificación y Calificación Global
@@ -690,3 +673,4 @@ elif st.session_state.stage == 'resultados':
 # --- 6. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Desarrollado para simular la estructura del GATB (General Aptitude Test Battery). Las puntuaciones son ilustrativas y no deben usarse para toma de decisiones sin un profesional cualificado.</p>", unsafe_allow_html=True)
+
