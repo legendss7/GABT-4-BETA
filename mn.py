@@ -38,16 +38,74 @@ def clasificar_percentil(porcentaje):
     else:
         return 5, "Muy Bajo 🔻"
 
+# Función para generar interpretación detallada y animada (en HTML/CSS)
+def obtener_interpretacion(percentil, area_code, area_name):
+    """Genera una interpretación detallada y formateada basada en el percentil y el código de área."""
+    interpretacion_base = {
+        "G": "Capacidad para percibir y comprender relaciones, aprender y emitir juicios. Es el factor 'g' de la inteligencia, clave para el éxito en cualquier campo.",
+        "V": "Habilidad para entender ideas expresadas en palabras, dominar vocabulario y redactar informes. Esencial para la comunicación eficaz.",
+        "N": "Rapidez y precisión para trabajar con números, realizar cálculos y resolver problemas matemáticos. Crucial en finanzas y análisis de datos.",
+        "S": "Habilidad para percibir formas en dos o tres dimensiones, rotar objetos mentalmente y visualizar relaciones espaciales. Importante en diseño e ingeniería.",
+        "P": "Rapidez para ver detalles en un objeto o tabla, realizar comparaciones y detectar pequeñas diferencias. Fundamental para el control de calidad.",
+        "Q": "Destreza y coordinación fina de los dedos y las manos, necesaria para ensamblar piezas pequeñas o manipular instrumentos. Típica de la cirugía o la relojería.",
+        "K": "Habilidad para coordinar movimientos oculares y manuales, controlando la mano con precisión. Importante en deportes, conducción y mecanografía.",
+        "A": "Capacidad de mantener la atención en una tarea monótona o repetitiva durante períodos prolongados, minimizando errores. Clave en roles de auditoría o ingreso de datos.",
+        "M": "Comprensión de principios físicos básicos, máquinas simples, fuerzas y movimiento. Esencial para técnicos, mecánicos y operarios de maquinaria.",
+        "R": "Capacidad para descubrir patrones y relaciones en figuras no verbales o simbólicas, crucial para la lógica pura y la programación.",
+        "C": "Rapidez y precisión para observar detalles verbales y numéricos, como en la clasificación, archivo y verificación de documentos. Típico de roles administrativos.",
+        "T": "Aplicación de la lógica y principios para identificar fallas, diseñar soluciones o seguir procesos técnicos complejos. Combina G, S, y M.",
+    }
+    
+    base_text = interpretacion_base.get(area_code, f"Mide una habilidad cognitiva o motriz específica.")
+
+    if percentil >= 90:
+        color_bg = "#38c172"  # Verde brillante (Muy Alto)
+        color_text = "white"
+        title = "🟢 Fortaleza Excepcional"
+        detalle = f"Su desempeño supera a más del 90% de la población. Esta aptitud es una **ventaja competitiva** que debe ser el foco de su carrera. Demuestra una **alta facilidad y eficiencia** para el aprendizaje y la ejecución de tareas relacionadas con **{area_name}**. ({base_text})"
+    elif percentil >= 70:
+        color_bg = "#6cb2eb"  # Azul claro (Alto)
+        color_text = "white"
+        title = "⬆️ Nivel Superior al Promedio"
+        detalle = f"Posee una capacidad sólida que lo sitúa en el cuartil superior. Puede manejar tareas de complejidad media-alta de forma autónoma. Es un recurso valioso en actividades que requieran **{area_name}**. ({base_text})"
+    elif percentil >= 30:
+        color_bg = "#ff9900"  # Naranja (Promedio)
+        color_text = "white"
+        title = "🟠 Nivel Promedio"
+        detalle = f"Su capacidad es consistente con la media de la población. Puede desempeñar roles sin mayores dificultades, pero el desarrollo continuo será clave si el puesto exige un alto dominio de **{area_name}**. ({base_text})"
+    elif percentil >= 10:
+        color_bg = "#e3342f"  # Rojo (Bajo)
+        color_text = "white"
+        title = "⬇️ Área de Oportunidad"
+        detalle = f"El desempeño se encuentra por debajo del promedio. Las tareas dependientes de **{area_name}** pueden ser desafiantes. Se sugiere **entrenamiento específico** o buscar roles donde esta aptitud sea menos crítica. ({base_text})"
+    else:
+        color_bg = "#490705"  # Rojo Oscuro (Muy Bajo)
+        color_text = "white"
+        title = "🔻 Necesidad Crítica de Soporte"
+        detalle = f"El rendimiento está muy por debajo del estándar. La exposición a tareas de alta demanda en **{area_name}** debe ser minimizada y acompañada de un **plan de desarrollo intensivo**. ({base_text})"
+        
+    return f"""
+        <div style="background-color: {color_bg}; padding: 20px; border-radius: 12px; color: {color_text}; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; color: {color_text};">{title} - {area_name} ({area_code})</h4>
+            <p style="font-size: 0.9em; margin-bottom: 0;">**Percentil:** {percentil}</p>
+            <p style="font-size: 0.9em; margin-bottom: 0;">{detalle}</p>
+        </div>
+    """
+
 # Función para forzar el scroll al inicio de la página
 def js_scroll_to_top():
-    """Injecta JS para forzar el scroll al inicio de la página padre."""
+    """Injecta JS para forzar el scroll al inicio de la página."""
     js_code = """
     <script>
         try {
-            // Intenta hacer scroll en el contenedor principal de Streamlit
-            const main = window.parent.document.querySelector('.main');
-            if (main) {
-                main.scrollTop = 0;
+            // Intenta hacer scroll en el contenedor principal de Streamlit dentro del iframe
+            const mainContainer = document.querySelector('.main');
+            if (mainContainer) {
+                mainContainer.scrollTop = 0;
+            } else {
+                // Fallback: scroll al inicio del documento
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
             }
         } catch (e) {
             console.error("No se pudo forzar el scroll:", e);
@@ -234,7 +292,8 @@ def vista_test_activo():
     # Contenedor para las preguntas
     with st.container(border=True):
         st.subheader(f"Instrucciones: {area_actual}")
-
+        
+        q_num = 1 # Contador local para la pregunta dentro de la sección
         for index, row in preguntas_area.iterrows():
             pregunta_id = row['id']
             
@@ -256,10 +315,17 @@ def vista_test_activo():
             with st.container(border=True):
                 # Determinar si la pregunta requiere imagen
                 pregunta_texto = row['pregunta']
+                
+                # Muestra el número de pregunta local y el texto de la pregunta
+                st.markdown(f"**Pregunta {q_num}.**") 
+                
                 if '[Image of' in pregunta_texto:
-                    image_tag = pregunta_texto[pregunta_texto.find('[Image of'):]
+                    image_tag_start = pregunta_texto.find('[Image of')
+                    image_tag_end = pregunta_texto.find(']', image_tag_start)
+                    image_tag = pregunta_texto[image_tag_start:image_tag_end+1]
+                    
                     st.markdown(pregunta_texto.replace(image_tag, ''))
-                    st.markdown(f"*(**FIGURA REQUERIDA** - Favor observar la figura a continuación)*")
+                    st.markdown(f"*(**ESTÍMULO VISUAL REQUERIDO**)*")
                     st.markdown(image_tag) # Mostrar el placeholder de la imagen
                 else:
                     st.markdown(pregunta_texto)
@@ -273,13 +339,15 @@ def vista_test_activo():
                 
                 # Radio Button
                 st.radio(
-                    f"Respuesta {row['code']}-{index % N_PREGUNTAS_POR_AREA + 1}:", 
+                    f"Respuesta {row['code']}-{q_num}:", 
                     opciones_radio, 
                     key=f'q_{pregunta_id}', 
                     index=default_index,
                     on_change=on_radio_change,
                     args=(pregunta_id, row['respuesta_correcta'])
                 )
+            
+            q_num += 1 # Incrementar contador local
     
     st.markdown("---")
 
@@ -293,7 +361,7 @@ def vista_test_activo():
     st.button(submit_label, type="primary", on_click=siguiente_area, use_container_width=True)
 
 def vista_resultados():
-    """Muestra el informe de resultados profesional sin gráficos."""
+    """Muestra el informe de resultados profesional sin gráficos, con detalles extendidos."""
     js_scroll_to_top() # Forzar scroll al cargar resultados
 
     st.title("📄 Informe de Resultados GATB Profesional")
@@ -355,7 +423,24 @@ def vista_resultados():
         }
     )
     
-    with st.expander("Glosario de Resultados y Clasificación", expanded=True):
+    st.markdown("---")
+    
+    # --- 3. Interpretación Detallada por Aptitud (Extensa y Animada) ---
+    st.subheader("Interpretación Detallada por Aptitud")
+    st.info("A continuación, se presenta el análisis de cada aptitud, clasificando su potencial y ofreciendo recomendaciones basadas en el percentil obtenido (Simulado).")
+    
+    for index, row in df_resultados.sort_values(by='Percentil Num', ascending=False).iterrows():
+        interpretacion_html = obtener_interpretacion(
+            row['Percentil Num'],
+            row['Código'],
+            row['Área']
+        )
+        # Mostrar la interpretación con formato HTML/CSS (animación visual)
+        st.markdown(interpretacion_html, unsafe_allow_html=True)
+        
+    st.markdown("---")
+
+    with st.expander("Glosario de Resultados y Clasificación", expanded=False):
         st.markdown(f"""
         - **Puntuación Bruta:** Número de aciertos en un área (Máx. {N_PREGUNTAS_POR_AREA}).
         - **Porcentaje (%):** Relación de aciertos vs. total de preguntas.
@@ -386,4 +471,4 @@ elif st.session_state.stage == 'resultados':
 
 # --- 6. FOOTER Y ACERCA DE ---
 st.markdown("---")
-st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Desarrollado para simular la estructura del GATB (General Aptitude Test Battery). Para uso profesional, consulte las normativas de su país.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Desarrollado por José Ignacio Taj-Taj</p>", unsafe_allow_html=True)
