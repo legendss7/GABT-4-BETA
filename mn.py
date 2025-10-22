@@ -1,45 +1,3 @@
-# --- INICIO DE CORRECCIÓN 3: Instrucciones de UI/UX añadidas como comentario ---
-"""
-Aquí tienes varios prompts detallados para generar una pantalla de resultados profesional para un test "GABT Pro Max".
-He basado los prompts en la suposición de que "GABT" es un test de aptitudes (similar al GATB - General Aptitude Test Battery, un test de aptitudes vocacionales) y que el "Pro Max" implica un diseño de alta gama, tecnológico y moderno.
-
-Prompt 1: Moderno, Corporativo y Centrado en Datos (Estilo Dashboard)
-Este prompt es ideal para una vista de escritorio o web, enfocado en la analítica.
-
-UI/UX design de una pantalla de resultados de un test de aptitud profesional llamado 'GABT Pro Max'. La interfaz es un dashboard web, limpio, moderno y de alta fidelidad.
-
-Elementos clave:
-1. Un 'Puntaje General' prominente (ej. '92%') en una tarjeta principal.
-2. Un gráfico de radar (radar chart) elegante que desglosa 8 aptitudes clave (Verbal, Numérica, Espacial, Percepción, etc.).
-3. Gráficos de barras horizontales comparando el puntaje del usuario con el promedio de la industria.
-4. Una sección de 'Recomendaciones de Carrera' o 'Fortalezas Clave' con íconos minimalistas.
-
-Estilo y Paleta:
-- Paleta de colores corporativa: azules profundos (#003366), blancos, grises claros (#F4F7FA) y un toque de verde azulado (teal, #00AAB5) o dorado como color de acento.
-- Tipografía sans-serif nítida (como Inter o Roboto).
-- Uso de espacio en blanco, sombras sutiles y bordes redondeados.
-- Mockup de Figma, tendencia en Behance, diseño profesional.
-
-Prompt 2: Elegante, Minimalista y en Modo Oscuro (Dark Mode)
-Este prompt busca un acabado más "premium" y tecnológico, muy popular en aplicaciones modernas.
-
-Diseño de interfaz (UI) para la pantalla de resultados del 'GABT Pro Max', en modo oscuro (dark mode) profesional. La pantalla debe sentirse premium y analítica.
-
-Elementos clave:
-1. Un saludo al usuario y su puntaje principal en un medidor circular (gauge chart) con un gradiente brillante (cian o verde neón).
-2. Tarjetas (cards) de vidrio esmerilado (frosted glass / glassmorphism) que muestran los puntajes de las sub-categorías.
-3. Un gráfico de líneas o área que muestra el 'Progreso de Aptitud' (si aplica).
-4. Un botón (CTA) claro que dice 'Ver Informe Detallado' o 'Explorar Carreras'.
-
-Estilo y Paleta:
-- Fondo: Gris muy oscuro o azul noche (#12182B).
-- Texto: Blanco y gris claro.
-- Acentos: Cian brillante (#00E0FF) o dorado (#FFD700) para gráficos y botones.
-- Diseño limpio, minimalista, con mucho espacio negativo.
-- Alta fidelidad, mockup de UI/UX, fotorrealista.
-"""
-# --- FIN DE CORRECCIÓN 3: Instrucciones de UI/UX añadidas como comentario ---
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -267,6 +225,12 @@ def set_stage(new_stage):
     st.session_state.error_msg = ""
     forzar_scroll_al_top() # LLAMADA A LA FUNCIÓN DE SCROLL AL TOP
 
+def reiniciar_test():
+    """Borra el estado y fuerza el inicio, asegurando un test nuevo."""
+    st.session_state.respuestas = {}
+    st.session_state.area_actual_index = 0
+    st.session_state.resultados_df = pd.DataFrame()
+    set_stage('inicio')
 
 def check_all_answered(area):
     """Verifica si todas las preguntas del área actual han sido respondidas."""
@@ -295,6 +259,9 @@ def siguiente_area():
 
 def solve_all():
     """Resuelve automáticamente todas las preguntas con la respuesta correcta (simulación) y navega a resultados."""
+    # Aseguramos el borrado antes de resolver (para la demo)
+    reiniciar_test() 
+    
     for index, row in df_preguntas.iterrows():
         pregunta_id = row['id']
         st.session_state.respuestas[pregunta_id] = row['respuesta_correcta']
@@ -342,7 +309,7 @@ def calcular_resultados():
     st.session_state.is_navigating = False
 
 
-# --- 3. COMPONENTES DE VISUALIZACIÓN ---
+# --- 3. COMPONENTES DE VISUALIZACIÓN Y GRÁFICOS ---
 
 def animated_progress_bar(label, percentil, color):
     """Genera una barra de progreso animada usando HTML/CSS."""
@@ -421,33 +388,6 @@ def create_radar_chart(df):
 def create_bar_chart(df):
     """Crea un gráfico de barras horizontal comparativo con Plotly."""
     
-    # Añadimos una columna para el promedio de referencia (simulado en 50%)
-    df['Promedio de Referencia (50%)'] = 50 
-    
-    fig = px.bar(
-        df.sort_values(by='Percentil', ascending=True), # Ordenar para que el gráfico quede mejor
-        y='Área',
-        x=['Percentil', 'Promedio de Referencia (50%)'], # Barras apiladas (no es lo ideal) o agrupadas
-        barmode='group', # Agrupadas para comparación directa
-        orientation='h',
-        color='Clasificación', # Colorear por la clasificación cualitativa
-        color_discrete_map={
-            "Superior (90-99)": "#008000", "Alto (80-89)": "#4682b4", "Promedio Alto (60-79)": "#ff8c00",
-            "Promedio (40-59)": "#ffd700", "Promedio Bajo (20-39)": "#ffa07a", "Bajo (10-19)": "#dc143c",
-            "Muy Bajo (0-9)": "#8b0000"
-        },
-        title='Comparativa de Aptitudes vs. Promedio General (50%)'
-    )
-    
-    # Ajustes finos de layout
-    fig.update_layout(
-        xaxis_title="Puntuación Percentil",
-        yaxis_title="Área Aptitudinal",
-        legend_title="Clasificación",
-        height=700
-    )
-    # Mostramos solo la barra del usuario y una línea o punto para el promedio. Usaremos un Scatter en lugar de una barra.
-    # Versión mejorada con línea de referencia para el promedio (50)
     fig = px.bar(
         df.sort_values(by='Percentil', ascending=True),
         y='Área',
@@ -459,8 +399,9 @@ def create_bar_chart(df):
             "Promedio (40-59)": "#ffd700", "Promedio Bajo (20-39)": "#ffa07a", "Bajo (10-19)": "#dc143c",
             "Muy Bajo (0-9)": "#8b0000"
         },
-        title='Comparativa de Aptitudes y Clasificación'
+        title='Detalle de Puntuaciones y Clasificación (Percentiles)'
     )
+    # Agregamos la línea de referencia para el promedio (50)
     fig.add_vline(x=50, line_width=2, line_dash="dash", line_color="gray", annotation_text="Promedio (50%)")
     fig.update_layout(xaxis_title="Puntuación Percentil", yaxis_title="Área Aptitudinal", legend_title="Clasificación", height=700)
     
@@ -509,7 +450,6 @@ def get_analisis_detalle(df_resultados):
 
 def get_estrategias_de_mejora(area):
     """Proporciona estrategias de mejora específicas para cada área aptitudinal."""
-    # (Mantenido del código anterior)
     estrategias = {
         "Razonamiento General": "Practicar juegos de lógica, resolver acertijos complejos y leer material de alta complejidad para expandir la capacidad de abstracción y juicio. **Aplicación:** Liderazgo estratégico y toma de decisiones complejas.",
         "Razonamiento Verbal": "Ampliar el vocabulario con lectura activa y usar herramientas de redacción para estructurar ideas complejas en informes y correos. **Aplicación:** Comunicación ejecutiva y negociación.",
@@ -530,33 +470,69 @@ def get_estrategias_de_mejora(area):
 # --- 5. VISTAS DE STREAMLIT ---
 
 def vista_inicio():
-    """Muestra la página de inicio e instrucciones."""
+    """Muestra la página de inicio e instrucciones, ahora más detallada y visual."""
 
-    st.title("🧠 Batería de Aptitudes Generales – GABT Pro Max")
-    st.header("Evaluación Estructurada de 12 Factores Aptitudinales")
+    st.markdown("""
+    <style>
+        .title-box {
+            background-color: #003366;
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .title-box h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 900;
+        }
+        .title-box h3 {
+            margin: 5px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+    </style>
+    <div class="title-box">
+        <h1>🧠 Batería de Aptitudes Generales – GABT Pro Max</h1>
+        <h3>Evaluación Estructurada de 12 Factores Aptitudinales Clave</h3>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
-    col1, col2 = st.columns([2, 1])
+    col_info, col_start = st.columns([3, 1])
 
-    with col1:
+    with col_info:
+        st.subheader("📊 Metodología de Evaluación")
         st.info(f"""
-        **🎯 Objetivo:** Medir **12 factores clave** de aptitud con **{N_TOTAL_PREGUNTAS} ítems simulados** para fines educativos y profesionales.
+        Esta prueba simula una evaluación aptitudinal de alto nivel, midiendo su potencial en **12 áreas cognitivas y motrices** fundamentales para el éxito profesional.
         
-        **📋 Estructura del Test:**
-        - **Total de Secciones:** **{len(AREAS)}**
-        - **Preguntas por Sección:** **{N_PREGUNTAS_POR_AREA}**
+        **🎯 Estructura del Test:**
+        - **Total de Aptitudes Evaluadas:** **{len(AREAS)}**
+        - **Total de Preguntas:** **{N_TOTAL_PREGUNTAS}** (12 ítems por área)
+        - **Resultado:** Informe profesional con análisis de percentiles, fortalezas y plan de desarrollo.
+        
+        **🔍 Áreas Clave:** Razonamiento (General, Verbal, Numérico, Abstracto), Habilidades Operativas (Clerical, Perceptiva) y Factores Psicomotores (Precisión, Coordinación).
+        """)
+        
+        st.markdown("""
+        **Guía Rápida de Inicio:**
+        1. **Concentración:** Asegúrese de estar en un ambiente libre de distracciones.
+        2. **Honestidad:** Responda según su mejor juicio, no hay penalización por fallar.
+        3. **Navegación:** Al hacer click en 'Siguiente', la página se actualizará y lo llevará al inicio de la nueva sección.
         """)
     
-    with col2:
-        st.subheader("Simulación Profesional")
-        st.warning("⚠️ **Nota:** Esta es una simulación. Los resultados son ilustrativos para el análisis. Todas las preguntas han sido creadas de forma específica.")
+    with col_start:
+        st.subheader("Iniciar Test")
+        st.warning("⚠️ **Nota de Simulación:** Esta es una prueba demostrativa. Los resultados y el análisis son ilustrativos para mostrar el potencial del informe profesional.")
         
-        if st.button("🚀 Iniciar Evaluación", type="primary", use_container_width=True, on_click=lambda: set_stage('test_activo')):
-            pass 
+        # Botón para iniciar el test (llama a set_stage('test_activo'))
+        st.button("🚀 Iniciar Evaluación", type="primary", use_container_width=True, on_click=lambda: set_stage('test_activo')) 
 
-        if st.button("✨ Resolver Todo (Demo) y Ver Informe", type="secondary", use_container_width=True, on_click=solve_all):
-            pass
+        # Botón para la demostración (resuelve todo y muestra informe)
+        st.button("✨ Ver Informe Rápido (Demo)", type="secondary", use_container_width=True, on_click=solve_all)
 
 
 def vista_test_activo():
@@ -630,6 +606,7 @@ def vista_test_activo():
 
     is_disabled = not all_answered
     
+    # Botón de navegación (con scroll al principio forzado)
     st.button(
         submit_label, 
         type="primary", 
@@ -673,35 +650,47 @@ def vista_resultados():
     """, unsafe_allow_html=True)
     
     st.markdown("---")
-
-    # --- 2. Análisis Estadístico y Visualización (GRÁFICOS) ---
-    st.subheader("2. Visualización Profesional del Perfil Aptitudinal")
     
-    col_radar, col_metrics = st.columns([1, 1])
+    # --- 2. KPIs (Key Performance Indicators) ---
+    st.subheader("2. Indicadores Clave de Desempeño (KPIs)")
+    
+    col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
+    
+    max_percentil = df_resultados['Percentil'].max()
+    min_percentil = df_resultados['Percentil'].min()
+    area_max = df_resultados.loc[df_resultados['Percentil'].idxmax()]['Área']
+    area_min = df_resultados.loc[df_resultados['Percentil'].idxmin()]['Área']
+    n_superior = df_resultados[df_resultados['Percentil'] >= 80].shape[0]
+    n_desarrollo = df_resultados[df_resultados['Percentil'] <= 40].shape[0]
 
-    with col_radar:
-        # Gráfico de Radar
-        st.markdown("**Gráfico de Radar: Distribución de Percentiles**")
-        st.plotly_chart(create_radar_chart(df_resultados), use_container_width=True)
+    with col_kpi1:
+        st.metric(label="Percentil Promedio Global", value=f"{avg_percentil:.1f}%", delta="Nivel General de Aptitud")
 
-    with col_metrics:
-        # Métricas Clave
-        st.markdown("#### Métricas Clave")
-        st.metric(label="Percentil General Promedio", value=f"{avg_percentil:.1f}%", delta=f"{df_resultados['Puntuación Bruta'].sum()} aciertos totales")
-        st.metric(label="Máxima Aptitud (Percentil)", value=f"{df_resultados['Percentil'].max():.1f}%", help=f"Área: {df_resultados.loc[df_resultados['Percentil'].idxmax()]['Área']}")
-        st.metric(label="Mínima Aptitud (Percentil)", value=f"{df_resultados['Percentil'].min():.1f}%", help=f"Área: {df_resultados.loc[df_resultados['Percentil'].idxmin()]['Área']}")
-        st.metric(label="Aptitudes Promedio/Superior (≥ 60%)", value=df_resultados[df_resultados['Percentil'] >= 60].shape[0], help="Número de áreas por encima de la media.")
+    with col_kpi2:
+        st.metric(label="Máxima Aptitud (Potencial)", value=f"{max_percentil:.1f}%", help=f"Área: {area_max}")
 
+    with col_kpi3:
+        st.metric(label="Áreas Fortalecidas (Percentil ≥ 80)", value=n_superior, delta=f"{n_superior/len(AREAS)*100:.0f}% del total")
+        
+    with col_kpi4:
+        st.metric(label="Áreas de Desarrollo Prioritario (Percentil ≤ 40)", value=n_desarrollo, delta=f"{n_desarrollo} áreas", delta_color="inverse")
 
-    # Gráfico de Barras Horizontal
     st.markdown("---")
-    st.subheader("3. Detalle de Puntuaciones y Clasificación (Percentiles)")
+
+    # --- 3. Visualización Profesional del Perfil Aptitudinal (GRÁFICOS) ---
+    st.subheader("3. Perfil Aptitudinal Visual (Gráficos Interactivos)")
+    
+    # Gráfico de Radar
+    st.markdown("#### Distribución Aptitudinal (Gráfico de Radar)")
+    st.plotly_chart(create_radar_chart(df_resultados), use_container_width=True)
+
+    # Gráfico de Barras Horizontal (Ahora separado del radar)
+    st.markdown("#### Comparativa Detallada de Percentiles")
     st.plotly_chart(create_bar_chart(df_resultados), use_container_width=True)
 
-    # Barras animadas (como complemento a los gráficos, para el efecto "Pro Max")
+    # Barras animadas (como complemento)
     st.markdown("---")
-    st.markdown("#### **Representación Animada (Percentiles Detallados)**")
-    st.info("Visualización por área con la clasificación cualitativa.")
+    st.markdown("#### **Representación Animada de Puntuaciones**")
     for index, row in df_resultados.sort_values(by='Percentil', ascending=False).iterrows():
         label = f"**{row['Área']}** ({row['Clasificación']})"
         percentil = row['Percentil']
@@ -741,6 +730,7 @@ def vista_resultados():
     st.markdown("#### **Estrategias Individualizadas de Desarrollo**")
     st.info("Plan de acción basado en las aptitudes con percentiles bajos (≤ 40%) o aquellas que requieran mejora continua.")
     
+    # Filtrar áreas con percentil <= 40
     bottom_areas = df_resultados[df_resultados['Percentil'] <= 40]['Área'].tolist()
     
     if bottom_areas:
@@ -756,8 +746,8 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # Botón de reinicio que asegura el scroll al top
-    st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=lambda: set_stage('inicio'), use_container_width=True)
+    # Botón de reinicio que asegura el borrado de respuestas y el scroll al top
+    st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=reiniciar_test, use_container_width=True)
 
 # --- 6. CONTROL DEL FLUJO PRINCIPAL ---
 
