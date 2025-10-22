@@ -1013,7 +1013,7 @@ st.markdown("---")
     
 
     # Botón de reinicio que asegura el borrado de respuestas y el scroll al top
-    st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=reiniciar_test, use_container_width=True)
+st.button("⏪ Realizar Nueva Evaluación", type="secondary", on_click=reiniciar_test, use_container_width=True)
 
 # --- 6. CONTROL DEL FLUJO PRINCIPAL Y SCROLL FORZADO ---
 
@@ -1033,4 +1033,5 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Informe generado por IA basado en la estructura del GATB. Las puntuaciones son simuladas con fines educativos y de demostración.</p>", unsafe_allow_html=True)
+
 
