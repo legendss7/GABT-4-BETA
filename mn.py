@@ -291,7 +291,7 @@ def generate_gatb_questions():
              "opciones": {"a": "Almacenar energía eléctrica temporalmente.", "b": "Regular el flujo de corriente.", "c": "Convertir AC a DC.", "d": "Actuar como interruptor."}},
             {"pregunta": "Para apretar un tornillo con mayor torque (fuerza de giro), ¿qué se debe hacer con la llave o herramienta?", 
              "opciones": {"a": "Aumentar la longitud del brazo de palanca (mango).", "b": "Disminuir la longitud del brazo de palanca.", "c": "Aplicar más velocidad.", "d": "Usar menos fricción."}},
-            {"pregunta": "Si se enciende un motor y empieza a vibrar excesivamente, la causa más probable de esta vibración es:", 
+            {"pregunta": "Si un motor se enciende y empieza a vibrar excesivamente, la causa más probable de esta vibración es:", 
              "opciones": {"a": "Un desequilibrio en las piezas giratorias.", "b": "Un aumento de voltaje.", "c": "Una baja temperatura.", "d": "Demasiada lubricación."}},
             {"pregunta": "¿Qué principio explica por qué un barco flota en el agua?", 
              "opciones": {"a": "Principio de Arquímedes (fuerza de flotación).", "b": "Ley de Pascal.", "c": "Principio de Bernoulli.", "d": "Ley de gravitación universal."}},
@@ -365,7 +365,7 @@ def generate_gatb_questions():
              "opciones": {"a": "60V", "b": "240V", "c": "120V", "d": "30V"}},
             {"pregunta": "¿Qué tipo de esfuerzo soporta un cable que se utiliza para izar una carga verticalmente?", 
              "opciones": {"a": "Tensión (tracción).", "b": "Compresión.", "c": "Cizalladura.", "d": "Flexión."}},
-            {"pregunta": "Para mejorar la eficiencia térmica de un motor, ¿qué se puede hacer con el sistema de refrigeración?", 
+            {"pregunta": "Para mejorar la eficiencia térmica de un motor, ¿qué se debe hacer con el sistema de refrigeración?", 
              "opciones": {"a": "Aumentar la superficie de intercambio de calor (radiador).", "b": "Disminuir la presión del refrigerante.", "c": "Usar menos refrigerante.", "d": "Aumentar la temperatura del motor."}},
             {"pregunta": "Un motor de combustión interna tiene un ciclo de cuatro tiempos (admisión, compresión, combustión, escape). ¿En qué tiempo se produce el trabajo útil?", 
              "opciones": {"a": "Combustión (expansión).", "b": "Admisión.", "c": "Compresión.", "d": "Escape."}},
@@ -921,22 +921,31 @@ def vista_resultados():
 
     st.markdown("---")
 
-    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES (GRILLA REFORZADA) ---
-    # Se utiliza st.columns(2) para la grilla y st.info/st.warning para contener el texto.
+    # --- 4. ANÁLISIS COMPARATIVO: FORTALEZAS Y DEBILIDADES (GRILLA MEJORADA) ---
     with st.container(border=True):
         st.subheader("4. Análisis Comparativo del Perfil")
         
         col_fortaleza, col_mejora = st.columns(2)
 
+        # Bloque de Fortalezas (Diseño de Card Profesional)
         with col_fortaleza:
-            st.markdown('<h4 style="color: #008000;">🌟 Fortalezas Intrínsecas (Top 3)</h4>', unsafe_allow_html=True)
-            with st.info("Estas aptitudes deben ser los pilares de la trayectoria profesional y la base para el entrenamiento de otras áreas."):
-                 st.markdown(analisis['fortalezas'], unsafe_allow_html=True) 
+            st.markdown('<h4 style="color: #008000; font-weight: 700;">🌟 Fortalezas Intrínsecas (Top 3)</h4>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="padding: 15px; border-left: 5px solid #008000; background-color: #f0fff0; border-radius: 5px;">
+                <p style="margin-top: 0; font-style: italic; color: #008000;">Estas aptitudes deben ser los pilares de la trayectoria profesional y la base para el entrenamiento de otras áreas.</p>
+                {analisis['fortalezas']}
+            </div>
+            """, unsafe_allow_html=True)
 
+        # Bloque de Oportunidades (Diseño de Card Profesional)
         with col_mejora:
-            st.markdown('<h4 style="color: #dc143c;">📉 Áreas de Oportunidad (Bottom 3)</h4>', unsafe_allow_html=True)
-            with st.warning("Una puntuación baja en estas áreas puede limitar el potencial en roles específicos y requiere desarrollo."):
-                st.markdown(analisis['mejoras'], unsafe_allow_html=True) 
+            st.markdown('<h4 style="color: #dc143c; font-weight: 700;">📉 Áreas de Oportunidad (Bottom 3)</h4>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="padding: 15px; border-left: 5px solid #dc143c; background-color: #fff0f0; border-radius: 5px;">
+                <p style="margin-top: 0; font-style: italic; color: #dc143c;">Una puntuación baja en estas áreas puede limitar el potencial en roles específicos y requiere desarrollo.</p>
+                {analisis['mejoras']}
+            </div>
+            """, unsafe_allow_html=True)
 
     st.markdown("---")
 
