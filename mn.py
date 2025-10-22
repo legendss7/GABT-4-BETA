@@ -3,11 +3,6 @@ import pandas as pd
 import numpy as np
 import time
 
-# 3. EJECUCIÓN CONDICIONAL DEL SCROLL
-if st.session_state.should_scroll:
-    forzar_scroll_al_top(idx)
-    st.session_state.should_scroll = False
-
 # --- 1. CONFIGURACIÓN E INICIALIZACIÓN ---
 st.set_page_config(layout="wide", page_title="Batería de Aptitudes GATB Profesional")
 
@@ -32,7 +27,32 @@ APTITUDES_MAP = {
 AREAS = list(APTITUDES_MAP.keys())
 N_PREGUNTAS_POR_AREA = 12
 
-
+# Función MAXIMAMENTE FORZADA para el scroll al top
+def forzar_scroll_al_top():
+    """
+    Injecta JS para forzar el scroll al inicio usando el ancla y múltiples selectores. 
+    Se incrementa el delay a 300ms para mayor estabilidad en el renderizado de Streamlit.
+    """
+    js_code = """
+        <script>
+            setTimeout(function() {
+                var topAnchor = window.parent.document.getElementById('top-anchor');
+                if (topAnchor) {
+                    // Intento 1: Scroll al ancla específica
+                    topAnchor.scrollIntoView({ behavior: 'auto', block: 'start' });
+                } else {
+                    // Intento 2: Scroll al top de la ventana principal
+                    window.parent.scrollTo({ top: 0, behavior: 'auto' });
+                    // Intento 3: Scroll al top del contenedor principal de Streamlit
+                    var mainContent = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
+                    if (mainContent) {
+                        mainContent.scrollTo({ top: 0, behavior: 'auto' });
+                    }
+                }
+            }, 300); // **Ajuste CRÍTICO a 300ms para estabilidad del scroll**
+        </script>
+        """
+    st.html(js_code)
 
 
 # Clasificación y Calificación Global
@@ -53,28 +73,28 @@ def calificar_global(avg_percentil):
 
 # --- 2. GENERACIÓN DE PREGUNTAS SIMULADAS (144 ITEMS) ---
 def generate_gatb_questions():
-    """Genera 144 preguntas simuladas para el test GATB sin derechos de autor."""
+    """Genera 144 preguntas simuladas para el test GATB con redacción revisada."""
     questions = []
     current_id = 1
     
-    # Datos específicos para cada factor (ejemplos funcionales)
+    # Datos específicos para cada factor (ejemplos funcionales con redacción revisada)
     test_data = {
         "Razonamiento General": {
             "code": "G",
             "type": "Analogías y Series Lógicas",
             "items": [
                 ("HACHA es a MADERA como CINCEL es a...", {"a": "Pintura", "b": "Metal", "c": "Escultura", "d": "Papel"}, "c"),
-                ("Completa la serie: 2, 5, 11, 23, ?", {"a": "45", "b": "47", "c": "49", "d": "51"}, "b"), # (x2 + 1)
+                ("Complete la serie: 2, 5, 11, 23, ?", {"a": "45", "b": "47", "c": "49", "d": "51"}, "b"), # (x2 + 1)
                 ("Día es a LUZ como Noche es a...", {"a": "Luna", "b": "Estrellas", "c": "Oscuridad", "d": "Silencio"}, "c"),
                 ("Si ARBOL vale 7 y FLOR vale 6, ¿cuánto vale AGUA?", {"a": "5", "b": "6", "c": "7", "d": "8"}, "a"), # Conteo de letras
                 ("¿Cuál palabra no pertenece al grupo? Piano, Violín, Guitarra, Tambor, Trompeta.", {"a": "Piano", "b": "Violín", "c": "Tambor", "d": "Trompeta"}, "c"), # Cuerda vs Percusión/Viento
-                ("Completa la serie: 8, 11, 15, 20, ?", {"a": "26", "b": "27", "c": "28", "d": "29"}, "a"), # +3, +4, +5, +6
-                ("PILOTO es a AVION como CAPITAN es a...", {"a": "Barco", "b": "Puerto", "c": "Tripulación", "d": "Mar"}, "a"),
+                ("Complete la serie: 8, 11, 15, 20, ?", {"a": "26", "b": "27", "c": "28", "d": "29"}, "a"), # +3, +4, +5, +6
+                ("PILOTO es a AVIÓN como CAPITÁN es a...", {"a": "Barco", "b": "Puerto", "c": "Tripulación", "d": "Mar"}, "a"),
                 ("Figura geométrica: ¿Qué sigue? Cuadrado, Triángulo, Círculo, Cuadrado, Triángulo, ?", {"a": "Cuadrado", "b": "Círculo", "c": "Rombo", "d": "Estrella"}, "b"),
                 ("La excepción: Gato, Perro, Vaca, Pollo, Caballo.", {"a": "Gato", "b": "Perro", "c": "Vaca", "d": "Pollo"}, "d"), # Mamíferos vs Ave
                 ("Si 3=9 y 4=16, ¿qué es 7?", {"a": "49", "b": "21", "c": "14", "d": "35"}, "a"), # Cuadrados
                 ("Libro es a PÁGINA como ÁRBOL es a...", {"a": "Raíz", "b": "Bosque", "c": "Hoja", "d": "Fruto"}, "c"),
-                ("Continúa la secuencia: Z, X, V, T, ?", {"a": "S", "b": "R", "c": "Q", "d": "P"}, "b"), # Abecedario de dos en dos
+                ("Continúe la secuencia: Z, X, V, T, ?", {"a": "S", "b": "R", "c": "Q", "d": "P"}, "b"), # Abecedario de dos en dos
             ]
         },
         "Razonamiento Verbal": {
@@ -125,7 +145,7 @@ def generate_gatb_questions():
                 ("Identifique el objeto 3D que se ve desde arriba como un círculo y desde el lado como un cuadrado.", {"a": "Cono", "b": "Cilindro", "c": "Esfera", "d": "Cubo"}, "b"),
                 ("¿Cuál es la vista frontal de una pirámide de base cuadrada?", {"a": "Cuadrado", "b": "Triángulo", "c": "Trapecio", "d": "Pentágono"}, "b"),
                 ("Si dobla una hoja a la mitad y luego la corta en el centro, ¿cuántos agujeros obtiene al desdoblarla?", {"a": "1", "b": "2", "c": "3", "d": "4"}, "b"),
-                ("¿Qué figura sigue en la secuencia de pliegues? Pliegue horizontal -> Pliegue vertical -> Corte en diagonal. ¿?", {"a": "Triángulo", "b": "Círculo", "c": "Rombo", "d": "Dos triángulos"}, "c"),
+                ("¿Qué figura sigue en la secuencia de pliegues? Pliegue horizontal -> Pliegue vertical -> Corte en diagonal.", {"a": "Triángulo", "b": "Círculo", "c": "Rombo", "d": "Dos triángulos"}, "c"),
                 ("Si un punto está en la parte inferior de una figura, ¿dónde estará después de rotarla $270^{\circ}$ a la izquierda?", {"a": "Parte superior", "b": "Parte derecha", "c": "Parte izquierda", "d": "Parte inferior"}, "b"),
                 ("¿Cuál figura (A, B, C, D) es la reflexión de la figura $A$?", {"a": "Figura A (misma)", "b": "Figura B", "c": "Figura C", "d": "Figura D (reflexión)"}, "d"),
                 ("Si un objeto tiene 5 caras, ¿cuál podría ser?", {"a": "Cubo", "b": "Pirámide de base triangular", "c": "Prisma rectangular", "d": "Tubo"}, "b"),
@@ -141,7 +161,7 @@ def generate_gatb_questions():
                 ("¿Cuántas veces aparece el código 'TRX' en esta lista? TRX, TRW, T RX, TYX, TRX, TRX.", {"a": "2", "b": "3", "c": "4", "d": "5"}, "b"),
                 ("Encuentre el par exacto: A) G2H5K - G2H5K, B) 1A3B5 - 1A3BS, C) PQR9 - PQR09, D) 8Y7Z - 8YIZ", {"a": "A", "b": "B", "c": "C", "d": "D"}, "a"),
                 ("¿Cuál nombre está mal escrito si el original es 'Hernández González'? A) Fernandez González, B) Hernández Gonzalez, C) Hernández González, D) Hernández Gnzalez", {"a": "A", "b": "B", "c": "C", "d": "D"}, "d"),
-                ("Identifique el error en la secuencia: 12345678901234567890123456789.", {"a": "Falta el 1", "b": "Hay un 9 repetido", "c": "Está incompleta", "d": "No hay error visible"}, "d"),
+                ("Identifique el error en la secuencia de dígitos: 12345678901234567890123456789.", {"a": "Falta el 1", "b": "Hay un 9 repetido", "c": "Está incompleta", "d": "No hay error visible"}, "d"),
                 ("Encuentre la dirección que no se repite: A) Calle Sol 15, B) Calle Sol 15, C) Av. Luna 22, D) Calle Sol 15", {"a": "A", "b": "B", "c": "C", "d": "D"}, "c"),
                 ("¿Qué código es diferente? ZB890, ZB89O, ZB890, ZB890.", {"a": "ZB890", "b": "ZB89O", "c": "Son iguales", "d": "ZB890 (el tercero)"}, "b"),
                 ("Marque el único par que son exactamente iguales: (A) 3K7R / 3K7R, (B) $50.00 / $500.0, (C) M1XQ / MI XQ, (D) 9A2B / 9A2V", {"a": "A", "b": "B", "c": "C", "d": "D"}, "a"),
@@ -189,11 +209,11 @@ def generate_gatb_questions():
             "code": "A",
             "type": "Vigilancia y Detección de Errores",
             "items": [
-                ("¿Cuántas letras 'E' minúsculas (e) hay en el siguiente texto? 'El experto examinó el expediente y encontró que el error se debe a la excesiva envergadura del esfuerzo.'", {"a": "10", "b": "11", "c": "12", "d": "13"}, "c"),
+                ("¿Cuántas letras 'e' minúsculas hay en el siguiente texto? 'El experto examinó el expediente y encontró que el error se debe a la excesiva envergadura del esfuerzo.'", {"a": "10", "b": "11", "c": "12", "d": "13"}, "c"),
                 ("En la lista de códigos, ¿cuál NO es 'X793R'? X793R, X793R, X793R, X793S.", {"a": "El primero", "b": "El segundo", "c": "El tercero", "d": "El cuarto"}, "d"),
-                ("Contar el número de veces que aparece el dígito '5' en la serie: 125345675895051253.", {"a": "5", "b": "6", "c": "7", "d": "8"}, "c"),
+                ("Cuente el número de veces que aparece el dígito '5' en la serie: 125345675895051253.", {"a": "5", "b": "6", "c": "7", "d": "8"}, "c"),
                 ("En la siguiente tabla de nombres y códigos, ¿cuál tiene un error de digitación? (A) Juan P. $1234, (B) María L. $1234, (C) Carlos M. $1243, (D) Ana S. $1234", {"a": "A", "b": "B", "c": "C", "d": "D"}, "c"),
-                ("¿Cuántas veces es la palabra 'LA' escrita en mayúsculas? La casa es grande. LA pared es blanca. La lámpara, LA mejor. LA ventana.", {"a": "1", "b": "2", "c": "3", "d": "4"}, "c"),
+                ("¿Cuántas veces aparece la palabra 'LA' escrita en mayúsculas? La casa es grande. LA pared es blanca. La lámpara, LA mejor. LA ventana.", {"a": "1", "b": "2", "c": "3", "d": "4"}, "c"),
                 ("Encuentre la única línea donde el $7$ NO es el último dígito: 1357, 2467, 8027, 9136.", {"a": "1357", "b": "2467", "c": "8027", "d": "9136"}, "d"),
                 ("Marque la figura que no coincide con el patrón: Cuadrado, Círculo, Cuadrado, Círculo, Triángulo.", {"a": "Primer Cuadrado", "b": "Segundo Círculo", "c": "Triángulo", "d": "Primer Círculo"}, "c"),
                 ("¿Cuál código postal está incompleto? A) 28001, B) 2801, C) 28002, D) 28003.", {"a": "A", "b": "B", "c": "C", "d": "D"}, "b"),
@@ -225,12 +245,12 @@ def generate_gatb_questions():
             "code": "R",
             "type": "Series de Figuras y Matrices",
             "items": [
-                ("La figura que completa la secuencia: Cuadrado (negro) -> Círculo (blanco) -> Triángulo (negro) -> Círculo (negro) -> ?", {"a": "Cuadrado (blanco)", "b": "Triángulo (blanco)", "c": "Círculo (negro)", "d": "Cuadrado (negro)"}, "b"),
+                ("La figura que completa la secuencia: Cuadrado (negro) $\to$ Círculo (blanco) $\to$ Triángulo (negro) $\to$ Círculo (negro) $\to$ ?", {"a": "Cuadrado (blanco)", "b": "Triángulo (blanco)", "c": "Círculo (negro)", "d": "Cuadrado (negro)"}, "b"),
                 ("¿Qué figura es la siguiente? I. Un punto, II. Dos puntos, III. Tres puntos en línea, IV. Cuatro puntos en cuadrado, V. ?", {"a": "Cinco puntos en pentágono", "b": "Cinco puntos en línea", "c": "Seis puntos en línea", "d": "Seis puntos en un hexágono"}, "a"),
                 ("¿Cuál es el patrón que falta en la matriz $3 \times 3$?", {"a": "Figura A (combina color/forma)", "b": "Figura B", "c": "Figura C", "d": "Figura D (patrón que falta)"}, "d"),
                 ("Identifique la figura intrusa: A) Triángulo equilátero, B) Círculo, C) Cuadrado, D) Rectángulo (lados diferentes).", {"a": "A", "b": "B", "c": "C", "d": "D"}, "b"),
                 ("Si $A \triangle B$ se transforma en $A \square B$, y $X \circ Y$ se transforma en $X \diamond Y$, ¿en qué se transforma $P \diamond Q$?", {"a": "P $\circ$ Q", "b": "P $\triangle$ Q", "c": "P $\square$ Q", "d": "P $\times$ Q"}, "a"),
-                ("Continúa la serie: $/\backslash, \mathrm{I}, \backslash/, \mathrm{II}, / \backslash, \mathrm{III}, \mathrm{?}$", {"a": "IV", "b": "\\/", "c": "//", "d": "III"}, "b"),
+                ("Continúe la serie: $/\backslash, \mathrm{I}, \backslash/, \mathrm{II}, / \backslash, \mathrm{III}, \mathrm{?}$", {"a": "IV", "b": "\\/", "c": "//", "d": "III"}, "b"),
                 ("El círculo de la izquierda se mueve al centro y se llena. El cuadrado de la derecha se mueve a la izquierda y se vacía. ¿Cuál es el resultado?", {"a": "Círculo lleno a la izquierda, cuadrado vacío a la derecha", "b": "Círculo vacío al centro, cuadrado lleno a la izquierda", "c": "Círculo lleno al centro, cuadrado vacío a la izquierda", "d": "Círculo lleno a la izquierda, cuadrado vacío al centro"}, "c"),
                 ("¿Qué figura se obtiene al sobreponer las figuras $A$ (rectángulo) y $B$ (círculo que lo interseca)?", {"a": "Círculo", "b": "Solo rectángulo", "c": "Las dos figuras visibles", "d": "Solo la intersección"}, "c"),
                 ("Una figura con $4$ lados se convierte en una con $5$. Una con $3$ lados se convierte en una con $4$. Una con $6$ lados se convierte en una con:", {"a": "6 lados", "b": "7 lados", "c": "8 lados", "d": "5 lados"}, "b"),
@@ -275,8 +295,6 @@ def generate_gatb_questions():
                 ("En el diagnóstico de software, si la aplicación falla al cargar, ¿qué se revisa primero?", {"a": "El código fuente", "b": "La compatibilidad del sistema operativo", "c": "La versión del navegador", "d": "El estado de la base de datos"}, "b"),
             ]
         },
-        # Quedan Razonamiento Abstracto, Mecánico, Concentrada, etc. (Usaré los códigos A, M, R, T, C para completar los 12)
-        # Ya incluí 8 áreas (G, V, N, S, P, Q, K, A, M, R, C, T) que suman 12. Ya están cubiertos.
     }
 
     # Reestructurar los datos para tener 12 preguntas por área.
@@ -284,7 +302,7 @@ def generate_gatb_questions():
         code = APTITUDES_MAP[area_name]["code"]
         data = test_data.get(area_name)
         
-        # En caso de que falten datos (aunque ya se han cubierto las 12), rellenar con genéricos
+        # Generar preguntas si falta el área (aunque ya están cubiertas todas las 12)
         if not data:
             data = {"items": []}
             for i in range(1, N_PREGUNTAS_POR_AREA + 1):
@@ -293,7 +311,7 @@ def generate_gatb_questions():
                 respuesta = "c"
                 data["items"].append((pregunta, opciones, respuesta))
 
-        # Asegurar 12 items (esto es una asunción de que el JSON de arriba tiene 12)
+        # Asegurar 12 items
         items_to_use = data["items"][:N_PREGUNTAS_POR_AREA]
         
         for i, (pregunta, opciones, respuesta) in enumerate(items_to_use):
@@ -319,7 +337,7 @@ N_TOTAL_PREGUNTAS = len(df_preguntas)
 if 'stage' not in st.session_state: st.session_state.stage = 'inicio'
 if 'respuestas' not in st.session_state: st.session_state.respuestas = {}
 if 'area_actual_index' not in st.session_state: st.session_state.area_actual_index = 0
-if 'is_navigating' not in st.session_state: st.session_state.is_navigating = False 
+if 'is_navigating' not in st.session_state: st.session_state.is_navigating = False # Solución anti-doble clic
 if 'error_msg' not in st.session_state: st.session_state.error_msg = ""
 if 'resultados_df' not in st.session_state: st.session_state.resultados_df = pd.DataFrame()
 
@@ -346,7 +364,7 @@ def check_all_answered(area):
 def siguiente_area():
     """Avanza a la siguiente área o finaliza el test, con validación y bloqueo (doble click)."""
     
-    # 1. Bloquear inmediatamente para evitar la doble ejecución
+    # 1. Bloquear inmediatamente para evitar la doble ejecución (Solución principal anti-doble clic)
     st.session_state.is_navigating = True 
     
     area_actual = AREAS[st.session_state.area_actual_index]
@@ -391,7 +409,7 @@ def calcular_resultados():
             "Puntuación Bruta": aciertos_area,
             "Máxima Puntuación": total_area,
             "Porcentaje (%)": f"{porcentaje:.1f}%",
-            "Percentil": percentil, # Columna numérica (FIX CRÍTICO)
+            "Percentil": percentil, # Columna numérica (FIX CRÍTICO para st.column_config.Progress)
             "Clasificación": clasificacion_texto,
             "Color": APTITUDES_MAP[area]["color"]
         })
@@ -487,7 +505,6 @@ def vista_test_activo():
                 try:
                     default_index = opciones_radio.index(full_option_text)
                 except ValueError:
-                    # Si no se encuentra (caso raro), dejamos None
                     default_index = None
 
             with st.container(border=True):
@@ -497,7 +514,7 @@ def vista_test_activo():
                 # Callback para guardar la respuesta inmediatamente al seleccionar
                 def on_radio_change(q_id):
                     selected_option_full = st.session_state[f'q_{q_id}']
-                    selected_key = selected_option_full.split(')')[0]
+                    selected_key = selected_option_full.split(')')[0].strip() # Asegurar limpieza del índice
                     st.session_state.respuestas[q_id] = selected_key
                     # Limpiar el error y forzar re-render para habilitar botón
                     st.session_state.error_msg = ""
@@ -521,7 +538,7 @@ def vista_test_activo():
     else:
         submit_label = "✅ Finalizar Test y Generar Informe"
 
-    # El botón se deshabilita si: 1) Está navegando (doble clic) O 2) No ha respondido todo (validación)
+    # El botón se deshabilita si: 1) Está navegando (anti-doble clic) O 2) No ha respondido todo (validación)
     is_disabled = st.session_state.is_navigating or not all_answered
     
     st.button(
@@ -548,7 +565,8 @@ def vista_resultados():
     st.markdown("---")
     
     # --- 1. Calificación Global ---
-    avg_percentil = df_resultados['Percentil'].mean()
+    # Usamos .loc para asegurar que solo trabajamos con la columna 'Percentil'
+    avg_percentil = df_resultados.loc[:, 'Percentil'].mean()
     calificacion, detalle_calificacion, color_calificacion = calificar_global(avg_percentil)
 
     st.subheader("📊 Calificación Global del Perfil")
@@ -591,15 +609,16 @@ def vista_resultados():
     df_display = df_resultados.copy()
     df_display = df_display[['Código', 'Área', 'Puntuación Bruta', 'Porcentaje (%)', 'Percentil', 'Clasificación']]
     
+    # El FIX clave es asegurar que 'Percentil' es numérico (ya lo es en calcular_resultados) 
+    # y está correctamente mapeado a st.column_config.Progress.
     st.dataframe(
         # Aplicamos el estilo de color
         df_display.style.apply(highlight_classification, axis=1),
         use_container_width=True,
         hide_index=True,
         column_config={
-            # FIX CRÍTICO: Aseguramos que 'Percentil' sea la clave usada para el Progress
             "Percentil": st.column_config.Progress( 
-                "Escala de Clasificación (Percentil)", # Nombre en la cabecera
+                "Escala de Clasificación (Percentil)", 
                 format="%d",
                 min_value=0,
                 max_value=100,
@@ -673,4 +692,3 @@ elif st.session_state.stage == 'resultados':
 # --- 6. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Desarrollado para simular la estructura del GATB (General Aptitude Test Battery). Las puntuaciones son ilustrativas y no deben usarse para toma de decisiones sin un profesional cualificado.</p>", unsafe_allow_html=True)
-
