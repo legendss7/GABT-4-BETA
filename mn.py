@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import time
-import plotly.express as px # Importación necesaria para los gráficos profesionales
-import plotly.graph_objects as go # Para el gráfico de Radar
+import plotly.express as px
+import plotly.graph_objects as go
 import streamlit.components.v1 as components # Necesario para la función de scroll
 
 # --- 1. CONFIGURACIÓN E INICIALIZACIÓN ---
@@ -199,10 +199,9 @@ if 'area_actual_index' not in st.session_state: st.session_state.area_actual_ind
 if 'is_navigating' not in st.session_state: st.session_state.is_navigating = False 
 if 'error_msg' not in st.session_state: st.session_state.error_msg = ""
 if 'resultados_df' not in st.session_state: st.session_state.resultados_df = pd.DataFrame()
-# NUEVA VARIABLE DE ESTADO PARA EL SCROLL
 if 'should_scroll' not in st.session_state: st.session_state.should_scroll = False
 
-# Función MAXIMAMENTE FORZADA para el scroll al top (SOLUCIÓN DEL USUARIO)
+# Función MAXIMAMENTE FORZADA para el scroll al top
 def forzar_scroll_al_top():
     """Fuerza el scroll al inicio de la página usando JavaScript y el ancla 'top-anchor'."""
     js_code = f"""
@@ -229,7 +228,6 @@ def set_stage(new_stage):
     st.session_state.stage = new_stage
     st.session_state.is_navigating = False
     st.session_state.error_msg = ""
-    # Activa la bandera de scroll
     st.session_state.should_scroll = True 
 
 def reiniciar_test():
@@ -266,7 +264,6 @@ def siguiente_area():
 
 def solve_all():
     """Resuelve automáticamente todas las preguntas con la respuesta correcta (simulación) y navega a resultados."""
-    # Aseguramos el borrado antes de resolver (para la demo)
     st.session_state.respuestas = {}
     
     for index, row in df_preguntas.iterrows():
@@ -365,6 +362,80 @@ def create_bar_chart(df):
     fig.update_layout(xaxis_title="Puntuación Percentil", yaxis_title="Área Aptitudinal", legend_title="Clasificación", height=700)
     return fig
 
+# --- 4. FUNCIONES DE REPORTE PROFESIONAL (ANÁLISIS) ---
+
+def get_analisis_detalle(df_resultados):
+    """Genera un análisis detallado de las fortalezas y debilidades, y el potencial ocupacional."""
+    
+    df_sorted = df_resultados.sort_values(by='Percentil', ascending=False)
+    
+    # Top 3 Fortalezas
+    top_3 = df_sorted.head(3)
+    fortalezas_text = "<ul>"
+    for index, row in top_3.iterrows():
+        # Mapeo de descripción de fortalezas
+        desc_map = {
+            "Razonamiento General": "abstracción y juicio lógico.",
+            "Razonamiento Verbal": "comunicación, redacción y comprensión de textos.",
+            "Razonamiento Numérico": "cálculo, análisis cuantitativo y finanzas.",
+            "Razonamiento Espacial": "visualización 3D y lectura de planos.",
+            "Velocidad Perceptiva": "revisión rápida y control de calidad.",
+            "Precisión Manual": "manipulación fina y detalle minucioso.",
+            "Coordinación Manual": "operación de maquinaria y sincronización motora.",
+            "Atención Concentrada": "foco sostenido y detección de errores en series.",
+            "Razonamiento Mecánico": "comprensión de principios de física e ingeniería.",
+            "Razonamiento Abstracto": "detección de patrones no verbales y pensamiento lateral.",
+            "Razonamiento Clerical": "organización, archivo y gestión documental.",
+            "Razonamiento Técnico": "diagnóstico de fallas y aplicación de procedimientos técnicos.",
+        }
+        key_application = desc_map.get(row['Área'], "habilidades cognitivas generales.")
+        fortalezas_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Una habilidad sobresaliente en esta área sugiere un alto potencial para la **{key_application}**.</li>"
+    fortalezas_text += "</ul>"
+    
+    # Bottom 3 a Mejorar
+    bottom_3 = df_sorted.tail(3)
+    mejoras_text = "<ul>"
+    for index, row in bottom_3.iterrows():
+        # Mapeo de descripción de mejoras
+        desc_map_improvement = {
+            "Razonamiento General": "el desarrollo de estrategias lógicas.",
+            "Razonamiento Verbal": "la claridad y la estructura del lenguaje.",
+            "Razonamiento Numérico": "la agilidad y precisión en el manejo de datos.",
+            "Razonamiento Espacial": "la capacidad de rotación y visualización 3D.",
+            "Velocidad Perceptiva": "la eficiencia en la búsqueda de información.",
+            "Precisión Manual": "la exactitud y el control motor fino.",
+            "Coordinación Manual": "la sincronización ojo-mano.",
+            "Atención Concentrada": "el mantenimiento del foco en tareas monótonas.",
+            "Razonamiento Mecánico": "la comprensión de sistemas de fuerza y movimiento.",
+            "Razonamiento Abstracto": "la identificación de reglas subyacentes en patrones.",
+            "Razonamiento Clerical": "la organización y el ordenamiento de información.",
+            "Razonamiento Técnico": "la aplicación práctica de conocimientos de ingeniería.",
+        }
+        improvement_focus = desc_map_improvement.get(row['Área'], "la mejora de habilidades básicas.")
+        mejoras_text += f"<li>**{row['Área']} ({row['Percentil']:.1f}%)**: Esta área requiere enfoque. El entrenamiento debe priorizar **{improvement_focus}**.</li>"
+    mejoras_text += "</ul>"
+
+    # Potencial Ocupacional (Basado en el perfil simulado)
+    top_area = top_3.iloc[0]['Área']
+    if top_area in ["Razonamiento Abstracto", "Razonamiento General", "Razonamiento Numérico"]:
+        potencial = "Roles Estratégicos, de Análisis Avanzado, Liderazgo, I+D y Consultoría."
+        perfil = "Alto Potencial Cognitivo (G-Factor) y Capacidad Analítica Avanzada."
+    elif top_area in ["Razonamiento Mecánico", "Razonamiento Espacial", "Razonamiento Técnico", "Coordinación Manual"]:
+        potencial = "Roles de Ingeniería, Diseño, Mantenimiento Industrial, Arquitectura y Operación de Maquinaria."
+        perfil = "Fuerte Perfil Técnico-Estructural y Habilidad Visomotora."
+    else:
+        potencial = "Roles Administrativos, de Control de Calidad, Logística, Soporte al Cliente y Operaciones de Detalle."
+        perfil = "Sólido Perfil Operativo y de Detalle (Foco en Velocidad, Precisión y Atención)."
+
+    return {
+        "fortalezas": fortalezas_text,
+        "mejoras": mejoras_text,
+        "potencial": potencial,
+        "perfil": perfil,
+        "top_area": top_area
+    }
+
+
 def get_graficos_interpretacion(df_resultados):
     """Genera un resumen detallado de la interpretación de los gráficos."""
     avg_percentil = df_resultados['Percentil'].mean()
@@ -405,7 +476,6 @@ def get_graficos_interpretacion(df_resultados):
 
 def get_estrategias_de_mejora(area):
     """Proporciona estrategias de mejora específicas para cada área aptitudinal."""
-    # (Mantenido del código anterior)
     estrategias = {
         "Razonamiento General": "Practicar juegos de lógica, resolver acertijos complejos y leer material de alta complejidad para expandir la capacidad de abstracción y juicio. **Aplicación:** Liderazgo estratégico y toma de decisiones complejas.",
         "Razonamiento Verbal": "Ampliar el vocabulario con lectura activa y usar herramientas de redacción para estructurar ideas complejas en informes y correos. **Aplicación:** Comunicación ejecutiva y negociación.",
@@ -423,7 +493,7 @@ def get_estrategias_de_mejora(area):
     return estrategias.get(area, "Se recomienda entrenamiento específico en tareas de aplicación práctica.")
 
 
-# --- 4. VISTAS DE STREAMLIT ---
+# --- 5. VISTAS DE STREAMLIT ---
 
 def vista_inicio():
     """Muestra la página de inicio e instrucciones, ahora más detallada y visual."""
@@ -579,6 +649,7 @@ def vista_resultados():
     """Muestra el informe de resultados profesional, detallado, con gráficos y estructurado."""
 
     df_resultados = st.session_state.resultados_df
+    # LA FUNCIÓN FUE AÑADIDA ARRIBA, SOLUCIONANDO EL ERROR
     analisis = get_analisis_detalle(df_resultados)
     
     st.title("🏆 Informe Ejecutivo de Perfil Aptitudinal GABT Pro Max")
@@ -648,7 +719,7 @@ def vista_resultados():
             st.markdown("#### Comparativa Detallada de Percentiles")
             st.plotly_chart(create_bar_chart(df_resultados), use_container_width=True)
 
-        # NUEVO: Resumen Detallado de Interpretación
+        # Resumen Detallado de Interpretación
         st.markdown(get_graficos_interpretacion(df_resultados), unsafe_allow_html=True)
 
     st.markdown("---")
