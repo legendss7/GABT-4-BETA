@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import altair as alt
 
 # --- 1. DEFINICIÓN DEL TEST (Datos en código Python) ---
 # Adaptación del GATB con 12 subtests (2 preguntas por área para una muestra funcional).
@@ -72,6 +73,22 @@ if 'respuestas' not in st.session_state:
 if 'area_actual_index' not in st.session_state:
     st.session_state.area_actual_index = 0
 
+# Diccionario de interpretación de aptitudes (para los resultados)
+INTERPRETACION_APTITUDES = {
+    "Razonamiento General (G)": "Habilidad para comprender principios, razonar lógicamente y tomar decisiones.",
+    "Razonamiento Verbal (V)": "Capacidad para comprender el significado de palabras y su uso en el lenguaje.",
+    "Razonamiento Numérico (N)": "Capacidad para manejar y comprender conceptos numéricos y matemáticos.",
+    "Razonamiento Espacial (S)": "Habilidad para visualizar objetos en dos o tres dimensiones y comprender su relación.",
+    "Velocidad Perceptiva (P)": "Capacidad para percibir detalles rápidamente y distinguir diferencias/similitudes.",
+    "Precisión Manual (Q)": "Destreza para manipular objetos pequeños con dedos y manos, análogo a tareas de alta precisión.",
+    "Coordinación Manual (K)": "Habilidad para coordinar movimientos de manos y dedos con la vista.",
+    "Atención Concentrada (A)": "Capacidad para enfocarse en una tarea sin distraerse, especialmente en la búsqueda de detalles.",
+    "Razonamiento Mecánico (M)": "Comprensión de principios físicos y mecánicos básicos (palancas, poleas, etc.).",
+    "Razonamiento Abstracto (R)": "Habilidad para descubrir relaciones y patrones en material no verbal o simbólico.",
+    "Razonamiento Clerical (C)": "Rapidez y precisión en tareas de oficina, como clasificación, archivo y verificación.",
+    "Razonamiento Técnico (T)": "Conocimiento práctico sobre herramientas, materiales y procedimientos técnicos."
+}
+
 # --- 3. LÓGICA DE NAVEGACIÓN Y CÁLCULO ---
 
 def set_stage(new_stage):
@@ -81,7 +98,6 @@ def set_stage(new_stage):
 def siguiente_area():
     """Avanza a la siguiente área del test."""
     if st.session_state.area_actual_index < len(AREAS) - 1:
-        # Corregido: Usar st.session_state
         st.session_state.area_actual_index += 1
     else:
         # Si es la última área, pasa a resultados
@@ -108,18 +124,26 @@ def calcular_resultados():
         
         # Clasificación
         if porcentaje < 40:
-            clasificacion = "Bajo"
+            clasificacion = "Bajo 🔻"
+            color = "red"
         elif 40 <= porcentaje <= 69:
-            clasificacion = "Promedio"
+            clasificacion = "Promedio 🟠"
+            color = "orange"
         else:
-            clasificacion = "Alto"
+            clasificacion = "Alto 🟢"
+            color = "green"
+
+        # Extraer el código corto (G, V, N, etc.) para el gráfico
+        area_code = area.split('(')[-1].replace(')', '').strip()
 
         resultados_data.append({
             "Área": area,
+            "Código": area_code,
             "Aciertos": aciertos_area,
             "Total": total_area,
-            "Porcentaje (%)": f"{porcentaje:.1f}",
-            "Nivel": clasificacion
+            "Porcentaje (%)": porcentaje, # Almacenado como float para graficar
+            "Nivel": clasificacion,
+            "Color": color
         })
     
     st.session_state.resultados_df = pd.DataFrame(resultados_data)
@@ -129,38 +153,57 @@ def calcular_resultados():
 
 def vista_inicio():
     """Muestra la página de inicio e instrucciones."""
-    st.title("Batería de Aptitudes Generales – GATB Digital")
-    st.markdown("## Evaluación de Aptitudes Cognitivas y Laborales")
+    st.title("Batería de Aptitudes Generales – GATB Digital 🧠")
+    st.header("Evaluación de 12 Aptitudes Cognitivas y Laborales")
     
-    st.info(f"""
-    **Instrucciones Generales:**
-    Este test consta de **{len(AREAS)} áreas** que miden distintas aptitudes cruciales para el desempeño laboral y cognitivo. 
-    El GATB original incluye entre 300 y 400 ítems con una duración aproximada de **2 a 3 horas**. Esta versión es una **muestra funcional**.
-    Se recomienda responder con honestidad y la máxima atención.
-    """)
+    st.markdown("---")
     
-    st.subheader(f"Estructura del Test (Muestra Funcional de {N_TOTAL_PREGUNTAS} preguntas)")
-    
-    # Tabla con las áreas y el número de preguntas (basado en la muestra actual)
-    df_resumen = df_preguntas.groupby('area').size().reset_index(name='Nº de preguntas')
-    st.dataframe(df_resumen.rename(columns={'area': 'Área de Aptitud'}).set_index('Área de Aptitud'), use_container_width=True)
+    col1, col2 = st.columns([2, 1])
 
-    if st.button("Comenzar Test", type="primary"):
-        st.session_state.area_actual_index = 0
-        set_stage('test_activo')
+    with col1:
+        st.info(f"""
+        **🎯 Objetivo:** Medir 12 factores clave de aptitud, desde el razonamiento abstracto hasta la coordinación manual.
+        
+        **📋 Instrucciones Generales:**
+        1.  El test se divide en **{len(AREAS)} secciones**, una por cada aptitud.
+        2.  En esta versión de muestra, cada sección tiene **2 preguntas**.
+        3.  Responda seleccionando la opción que considere correcta.
+        4.  Una vez seleccionado, haga clic en el botón para avanzar a la siguiente aptitud.
+        """)
+    
+    with col2:
+        st.subheader("Tiempo y Precisión")
+        st.warning("⚠️ **Importante:** La versión completa del GATB es cronometrada y mucho más extensa. Responda esta muestra con la máxima concentración.")
+        if st.button("🚀 Comenzar Test", type="primary", use_container_width=True):
+            st.session_state.area_actual_index = 0
+            set_stage('test_activo')
+
+    st.markdown("---")
+    st.subheader(f"Estructura del Test (Muestra de {N_TOTAL_PREGUNTAS} preguntas)")
+    
+    # Tabla con las áreas y el número de preguntas
+    df_resumen = df_preguntas.groupby('area').size().reset_index(name='Nº de preguntas')
+    st.dataframe(
+        df_resumen.rename(columns={'area': 'Área de Aptitud'}).set_index('Área de Aptitud'), 
+        use_container_width=True,
+        hide_index=False
+    )
 
 def vista_test_activo():
     """Muestra la sección de preguntas del área actual."""
     area_actual = AREAS[st.session_state.area_actual_index]
-    
-    st.header(f"Sección {st.session_state.area_actual_index + 1} de {len(AREAS)}: {area_actual}")
+    total_areas = len(AREAS)
+    current_area_index = st.session_state.area_actual_index
+    progress_percentage = (current_area_index) / total_areas # Progreso al inicio de la sección
+
+    # --- Barra de Progreso ---
+    st.progress(progress_percentage, text=f"Progreso General: Sección **{current_area_index + 1}** de **{total_areas}** | Área: **{area_actual}**")
+    st.header(f"Sección {current_area_index + 1}: {area_actual}")
     st.markdown("---")
     
     # Filtrar las preguntas para el área actual
     preguntas_area = df_preguntas[df_preguntas['area'] == area_actual]
 
-    # Se ha eliminado el wrapper st.form para evitar el error de callback.
-    # Las respuestas se guardan en el estado (st.session_state) inmediatamente usando on_change.
     for index, row in preguntas_area.iterrows():
         pregunta_id = row['id']
         
@@ -177,88 +220,126 @@ def vista_test_activo():
         except (ValueError, AttributeError):
             default_index = -1 # No seleccionada o respuesta inválida
 
-        st.markdown(f"**{row['id']}. {row['pregunta']}**")
-        
-        # Callback para guardar la respuesta inmediatamente al seleccionar
-        def on_radio_change(q_id, opciones):
-            selected_option_full = st.session_state[f'q_{q_id}']
-            # Extraer solo la clave (a, b, c, d)
-            selected_key = selected_option_full.split(')')[0]
-            st.session_state.respuestas[q_id] = selected_key
-        
-        # Si no hay respuesta anterior, el índice es None para que no seleccione nada
-        index_to_use = default_index if default_index != -1 else None
+        # Contenedor para cada pregunta con un borde visual
+        with st.container(border=True):
+            st.markdown(f"**{row['id']}. {row['pregunta']}**")
+            
+            # Callback para guardar la respuesta inmediatamente al seleccionar
+            def on_radio_change(q_id):
+                selected_option_full = st.session_state[f'q_{q_id}']
+                # Extraer solo la clave (a, b, c, d)
+                selected_key = selected_option_full.split(')')[0]
+                st.session_state.respuestas[q_id] = selected_key
+            
+            # Si no hay respuesta anterior, el índice es None para que no seleccione nada
+            index_to_use = default_index if default_index != -1 else None
 
-        st.radio(
-            "Selecciona tu respuesta:", 
-            opciones_radio, 
-            key=f'q_{pregunta_id}', 
-            index=index_to_use,
-            on_change=on_radio_change,
-            args=(pregunta_id, row['opciones'])
-        )
-        st.markdown("---")
+            st.radio(
+                "Selecciona tu respuesta:", 
+                opciones_radio, 
+                key=f'q_{pregunta_id}', 
+                index=index_to_use,
+                on_change=on_radio_change,
+                args=(pregunta_id,)
+            )
     
+    st.markdown("---")
+
     # Botón para pasar a la siguiente sección / finalizar
     if st.session_state.area_actual_index < len(AREAS) - 1:
         next_area_name = AREAS[st.session_state.area_actual_index + 1].split('(')[0].strip()
-        submit_label = f"Continuar a {next_area_name}"
+        submit_label = f"Continuar a Sección {current_area_index + 2} ({next_area_name})"
         callback_func = siguiente_area
     else:
-        submit_label = "Finalizar Test y Ver Resultados"
+        submit_label = "🎉 Finalizar Test y Ver Resultados"
         callback_func = siguiente_area
 
-    # Usamos st.button con on_click para avanzar la navegación
-    st.button(submit_label, type="primary", on_click=callback_func)
+    # Botón de navegación
+    st.button(submit_label, type="primary", on_click=callback_func, use_container_width=True)
 
 
 def vista_resultados():
-    """Muestra la tabla de resultados y la clasificación."""
+    """Muestra la tabla de resultados, el gráfico y la clasificación."""
     st.title("✅ Resultados de la Batería GATB Digital")
-    st.markdown("---")
+    st.header("Análisis de Aptitudes Clave")
     
     df_resultados = st.session_state.resultados_df
 
-    st.subheader("Puntuaciones Detalladas por Área de Aptitud")
-    st.dataframe(df_resultados.set_index('Área'), use_container_width=True)
+    # --- 1. Gráfico de Aptitudes (Visualización Profesional) ---
+    st.subheader("Gráfico de Puntuaciones por Aptitud")
     
-    st.markdown("### Interpretación de Niveles:")
-    st.markdown("- **Alto (70-100%):** Aptitud superior al promedio, indica potencial destacado en el área.")
-    st.markdown("- **Promedio (40-69%):** Aptitud adecuada para tareas comunes, indica un buen desempeño general.")
-    st.markdown("- **Bajo (0-39%):** Aptitud que requiere desarrollo o entrenamiento adicional.")
-    
+    # Crear la gráfica de barras horizontales
+    chart = alt.Chart(df_resultados).mark_bar().encode(
+        y=alt.Y('Código', sort='-x', title='Aptitud (Código GATB)'),
+        x=alt.X('Porcentaje (%)', title='Puntuación (%)'),
+        color=alt.Color('Color', scale=None, legend=None), # Usa la columna 'Color' calculada
+        tooltip=['Área', 'Porcentaje (%)', 'Nivel']
+    ).properties(
+        height=400
+    )
+    st.altair_chart(chart, use_container_width=True)
+
     st.markdown("---")
-    st.subheader("Análisis General")
     
-    # Encontrar la aptitud más alta
+    # --- 2. Análisis General ---
+    st.subheader("Análisis Consolidado")
+    
+    # Encontrar la aptitud más alta y la más baja
     df_resultados['Porcentaje (%)'] = pd.to_numeric(df_resultados['Porcentaje (%)'])
     mejor_area = df_resultados.loc[df_resultados['Porcentaje (%)'].idxmax()]
-    
-    st.success(f"""
-    **Tu Aptitud Más Destacada es:** **{mejor_area['Área']}** con un **{mejor_area['Porcentaje (%)']}%** de aciertos.
-    """)
-    
-    st.warning("¡Importante! Este es un test de muestra. Para una evaluación laboral o clínica formal, siempre consulte a un psicólogo profesional.")
+    peor_area = df_resultados.loc[df_resultados['Porcentaje (%)'].idxmin()]
 
-    if st.button("Volver al Inicio", type="secondary"):
+    col_mejor, col_peor = st.columns(2)
+
+    with col_mejor:
+        st.success(f"""
+        **🌟 Mayor Fortaleza:** **{mejor_area['Área']}** ({mejor_area['Código']})
+        - Puntuación: **{mejor_area['Porcentaje (%)']:.1f}%**
+        - Descripción: {INTERPRETACION_APTITUDES.get(mejor_area['Área'], 'N/A')}
+        """)
+    
+    with col_peor:
+        st.error(f"""
+        **🚨 Mayor Área de Oportunidad:** **{peor_area['Área']}** ({peor_area['Código']})
+        - Puntuación: **{peor_area['Porcentaje (%)']:.1f}%**
+        - Descripción: {INTERPRETACION_APTITUDES.get(peor_area['Área'], 'N/A')}
+        """)
+
+    st.markdown("---")
+    
+    # --- 3. Puntuaciones Detalladas (Tabla y Expander de Interpretación) ---
+    
+    st.subheader("Tabla Detallada de Resultados")
+    st.dataframe(
+        df_resultados[['Área', 'Aciertos', 'Total', 'Porcentaje (%)', 'Nivel']], 
+        use_container_width=True,
+        hide_index=True
+    )
+    
+    with st.expander("ℹ️ Entendiendo tu Nivel de Aptitud"):
+        st.markdown("La clasificación de nivel se basa en el porcentaje de aciertos en esta muestra:")
+        st.markdown("- **🟢 Alto (70-100%):** Aptitud superior, indica un potencial destacado y una base sólida para tareas relacionadas.")
+        st.markdown("- **🟠 Promedio (40-69%):** Aptitud adecuada, indica que el desempeño es bueno y se alinea con la media.")
+        st.markdown("- **🔻 Bajo (0-39%):** Aptitud que requiere mayor desarrollo o entrenamiento. Es un área de mejora.")
+    
+    st.markdown("---")
+    st.warning("¡Importante! Este es un test de muestra con fines ilustrativos. Para una evaluación laboral o clínica formal, siempre consulte a un psicólogo profesional o utilice la batería completa bajo supervisión.")
+
+    if st.button("⏪ Volver a la Portada", type="secondary"):
         st.session_state.respuestas = {}
-        # Corregido: Usar st.session_state
         st.session_state.area_actual_index = 0
         set_stage('inicio')
 
 
 # --- 5. CONTROL DEL FLUJO PRINCIPAL ---
 
-# Corregido: Usar st.session_state
 if st.session_state.stage == 'inicio':
     vista_inicio()
-# Corregido: Usar st.session_state
 elif st.session_state.stage == 'test_activo':
     vista_test_activo()
-# Corregido: Usar st.session_state
 elif st.session_state.stage == 'resultados':
     vista_resultados()
 
 # --- 6. FOOTER ---
 st.markdown("---")
-st.markdown("<p style='text-align: center; font-size: small; color: grey;'>TEST CREADO POR JOSÉ IGNACIO TAJ-TAJ</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Basado en la estructura del GATB (General Aptitude Test Battery). <br>Desarrollado para fines de demostración por J.I. Taj-Taj.</p>", unsafe_allow_html=True)
