@@ -755,7 +755,7 @@ def vista_inicio():
     
     with col_start:
         st.subheader("Iniciar Test")
-        st.warning("⚠️ **Nota de Simulación:** Esta es una prueba demostrativa. Los resultados y el análisis son ilustrativos.")
+        st.warning("⚠️")
         
         # Botón para iniciar el test
         st.button("🚀 Iniciar Evaluación", type="primary", use_container_width=True, on_click=lambda: set_stage('test_activo')) 
@@ -999,4 +999,5 @@ if st.session_state.should_scroll:
 # --- 7. FOOTER Y ACERCA DE ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; font-size: small; color: grey;'>Test creado por José Ignacio Taj-Taj.</p>", unsafe_allow_html=True)
+
 
